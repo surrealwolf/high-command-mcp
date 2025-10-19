@@ -29,11 +29,24 @@ jobs:
               
               // Check if PR is from a fork (dependabot, etc.)
               const pr = pullRequests[0];
+              // Only approve PRs from trusted authors
+              const trustedAssociations = ['MEMBER', 'OWNER', 'COLLABORATOR'];
               if (pr.head.repo === null) {
                 console.log('Skipping approval for fork PR');
                 return;
               }
+              if (!trustedAssociations.includes(pr.author_association)) {
+                console.log(`Skipping approval for PR author with association: ${pr.author_association}`);
+                return;
+              }
 
+              // Optionally, require a specific label (uncomment to use)
+              // const requiredLabel = 'auto-approve';
+              // const hasLabel = pr.labels.some(label => label.name === requiredLabel);
+              // if (!hasLabel) {
+              //   console.log(`Skipping approval: PR does not have required label '${requiredLabel}'`);
+              //   return;
+              // }
               // Get existing reviews
               const { data: reviews } = await github.rest.pulls.listReviews({
                 owner: context.repo.owner,
