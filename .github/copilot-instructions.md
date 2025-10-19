@@ -5,7 +5,7 @@
 **High-Command** is a Python MCP (Model Context Protocol) Server that integrates with the **HellHub Collective API** for Helldivers 2 game data.
 
 ### Key Technologies
-- **Language**: Python 3.13.7
+- **Language**: Python 3.14.0
 - **Framework**: MCP Server (async/await)
 - **API Client**: httpx (async HTTP)
 - **Data Validation**: Pydantic v2
@@ -280,6 +280,7 @@ logging.basicConfig(level=logging.DEBUG)
 make help                    # Show all available commands
 make install                 # Install package
 make dev                     # Install dev dependencies
+make run                     # Run the MCP server
 make test                    # Run unit tests with coverage (12/12 passing ✅)
 make test-fast               # Run tests without coverage
 make lint                    # Check code quality
@@ -314,7 +315,7 @@ venv/bin/python3 verify_project.py  # Full project verification
 
 ---
 
-**Last Updated**: October 18, 2025
+**Last Updated**: October 19, 2025
 **Version**: 1.0.0
-**Python**: 3.13.7
+**Python**: 3.14.0
 **Status**: Production Ready 🟢

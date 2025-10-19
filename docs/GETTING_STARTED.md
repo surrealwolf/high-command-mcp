@@ -20,7 +20,7 @@ Your High-Command MCP Server project has been successfully set up. Here's what's
 - [x] Dockerfile for containerization
 - [x] docker-compose.yml for local development
 - [x] GitHub Actions CI/CD workflows
-- [x] Multiple Python version testing (3.13.7)
+- [x] Python 3.14.0 support (pyenv)
 
 ### Documentation ✅
 - [x] README.md with feature overview
@@ -62,7 +62,7 @@ make test
 
 ### 5. Start Development
 ```bash
-python -m highcommand.server
+make run
 ```
 
 ## 📋 Common Commands
@@ -72,6 +72,7 @@ python -m highcommand.server
 | `make help` | Show all available commands |
 | `make install` | Install package |
 | `make dev` | Install development dependencies |
+| `make run` | Run the MCP server |
 | `make test` | Run tests with coverage |
 | `make lint` | Check code quality |
 | `make format` | Format code automatically |

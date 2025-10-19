@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Python 3.9 or higher
+- Python 3.14.0 or higher (recommended)
 - pip (Python package manager)
 - Git
 - Docker (optional)

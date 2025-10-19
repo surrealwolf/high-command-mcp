@@ -16,7 +16,7 @@ A Model Context Protocol (MCP) server for seamless integration with the HellHub 
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.14.0+
 - pip or uv
 - Docker (optional)
 
@@ -38,10 +38,13 @@ make dev
 
 ```bash
 # Run with make
+make run
+
+# Or with Docker
 make docker-run
 
 # Or directly
-python -m mcp.server
+python -m highcommand.server
 ```
 
 ### Running Tests
