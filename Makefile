@@ -1,5 +1,9 @@
 .PHONY: help install dev test lint format clean docker-build docker-run docs run venv
 
+# Force use of bash shell (required for make to work properly with line continuations)
+SHELL := /bin/bash
+.SHELLFLAGS := -o pipefail -c
+
 # Use venv Python if available, otherwise fall back to system python
 PYTHON := $(shell [ -d venv ] && echo venv/bin/python3 || echo python3)
 PIP := $(shell [ -d venv ] && echo venv/bin/pip || echo pip)

@@ -121,12 +121,26 @@ class WarInfo(BaseModel):
 ### Setup
 ```bash
 make help                   # Show all available commands
+make venv                   # Create virtual environment (optional, dev/install do this automatically)
 make install                # Install package in development mode
 make dev                    # Install dev dependencies
 make format                 # Auto-format code (black, ruff)
 make lint                   # Check code quality
 make test                   # Run tests with coverage (12/12 passing ✅)
+make run                    # Run the MCP server
 ```
+
+### Important: Shell Compatibility
+- **Makefile uses bash**: All Makefile commands execute with bash shell (not fish/sh)
+- **Terminal commands**: When running terminal commands from Python/scripts:
+  - Use single-line commands or semicolons for multi-line operations
+  - Avoid bash-specific syntax like line continuations with backslash
+  - Example: `python3 -c "..." && python3 -m pytest` (good)
+  - Example: `python3 \n-c "..."` (bad - not portable)
+- **Fish shell compatibility**: Test all terminal commands work in fish shell
+  - Wrap complex commands in `bash -c 'command'` if needed
+  - Use `; and` instead of `&&` in fish
+  - Example for multi-command: Use `make` targets instead of complex one-liners
 
 ### Adding New API Endpoint
 1. Add method to `HellHubAPIClient` in `highcommand/api_client.py`
@@ -209,6 +223,35 @@ All documentation moved to `docs/`:
 - `docs/GETTING_STARTED.md` - Quick start guide
 - `docs/CONTRIBUTING.md` - How to contribute
 - `docs/ITERATION_SUMMARY.md` - Development notes
+
+## Terminal Command Best Practices
+
+### For GitHub Copilot Terminal Execution
+When using run_in_terminal tool, follow these guidelines to ensure compatibility:
+
+1. **Single-line commands are preferred**
+   - ✅ Good: `python3 -m pytest tests/`
+   - ✅ Good: `pip install package && python3 -c "import package"`
+   - ❌ Avoid: Multi-line with backslash continuation
+
+2. **Use semicolons for command chaining**
+   - ✅ Good: `cd dir; make test`
+   - ✅ Good: `python3 --version; pip list`
+   - ❌ Avoid: Pipe chains that expect bash-specific features
+
+3. **Wrap complex operations in bash when needed**
+   - ✅ Good: `bash -c 'for i in {1..3}; do echo $i; done'`
+   - ✅ Good: `bash -c 'python3 -m pytest && git add .'`
+
+4. **Shell-agnostic patterns**
+   - ✅ Good: Use `make` targets for complex operations
+   - ✅ Good: Use single Python scripts instead of shell scripts
+   - ❌ Avoid: Fish-specific syntax like `and`/`or` operators
+
+5. **Environment variables**
+   - ✅ Good: `python3 -c "import os; print(os.environ['PATH'])"`
+   - ✅ Good: `export VAR=value && python3 script.py`
+   - ❌ Avoid: Complex variable substitution patterns
 
 ## Common Tasks
 
