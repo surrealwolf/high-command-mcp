@@ -226,99 +226,59 @@ All documentation moved to `docs/`:
 
 ## Terminal Command Best Practices
 
-### For GitHub Copilot Terminal Execution (Fish Shell Environment)
+### For GitHub Copilot Terminal Execution
 
-When using run_in_terminal tool, follow these guidelines to ensure compatibility with fish shell:
+When using run_in_terminal tool, follow these guidelines:
 
-#### Priority 1: Use Makefile Targets (Preferred)
-Always prefer `make` targets for common operations:
-- ✅ **Excellent**: `make test` (bash, reproducible)
-- ✅ **Excellent**: `make install` (bash, reproducible)
-- ✅ **Excellent**: `make format` (bash, reproducible)
-- ❌ **Avoid**: Complex shell commands when a make target exists
+#### Use Makefile Targets
+Always use `make` targets for all operations:
+- ✅ `make test` - Run tests with coverage
+- ✅ `make check-all` - Format, lint, and test
+- ✅ `make commit-changes` - Stage, commit, and show status
+- ✅ `make release` - Full quality gate before release
+- ✅ `make help` - Show all available targets
 
-Makefile enforces bash shell (`SHELL := /bin/bash`), ensuring compatibility.
+Makefile enforces bash shell (`SHELL := /bin/bash`), ensuring cross-shell compatibility.
 
-#### Priority 2: Wrap Non-Make Commands in `bash -c`
-For all other terminal commands, wrap in `bash -c '...'`:
+#### Simple Python Commands
+Direct Python commands work for straightforward operations:
+- ✅ `python -m pytest tests/test_api_client.py`
+- ✅ `python3 --version`
+- ✅ `python -m highcommand.server`
 
-1. **Single operations wrapped in bash -c**
-   - ✅ Good: `bash -c 'cd /path && python -m pytest tests/'`
-   - ✅ Good: `bash -c 'git add . && git commit -m "message"'`
-   - ✅ Good: `bash -c 'for i in {1..3}; do echo $i; done'`
-   - ❌ Avoid: `cd /path; python -m pytest` (without bash -c)
-   - ❌ Avoid: `for i in {1..3}; do echo $i; done` (fish interprets differently)
+#### For Everything Else
+Create a new Make target instead of complex shell commands.
 
-2. **Proper command structure**
-   ```bash
-   bash -c 'command1 && command2 || command3'
-   bash -c 'export VAR=value && python script.py'
-   bash -c '[[ -f file ]] && echo "exists"'
-   ```
+#### Available Make Targets
 
-3. **What to AVOID**
-   - ❌ `&&` or `||` outside bash -c (fish uses `and`/`or`)
-   - ❌ `{ ... }` braces outside bash -c (syntax conflict)
-   - ❌ `$(...)` command substitution without bash -c (behaves differently)
-   - ❌ Line continuations with backslash (not portable)
-   - ❌ `for`, `while`, `if` without bash -c (fish has different syntax)
-
-#### Priority 3: Single Python Commands
-Direct Python commands work in fish if no bash-specific syntax:
-
-- ✅ `python3 --version` (simple)
-- ✅ `python3 -m pytest tests/test_api_client.py` (simple)
-- ✅ `python3 -c "import sys; print(sys.version)"` (simple)
-- ⚠️ `python3 -c "import os; print(os.environ.get('PATH'))"` (wrapped better)
-
-#### Quick Reference
-
-| Command Type | Method | Example |
-|--------------|--------|---------|
-| Test/build/format | Make | `make test` |
-| Complex operations | Bash -c | `bash -c 'cd dir && make test && git add .'` |
-| Single Python | Direct | `python -m pytest tests/` |
-| Environment setup | Bash -c | `bash -c 'export VAR=value && python script.py'` |
-| File operations | Bash -c | `bash -c '[[ -f file ]] && cat file'` |
-| Loops/conditions | Bash -c | `bash -c 'for i in {1..3}; do echo $i; done'` |
-
-#### Real-World Examples
-
-```bash
-# ✅ GOOD: Use make targets
-make test
-
-# ✅ GOOD: Simple Python command
-python -m pytest tests/test_api_client.py
-
-# ✅ GOOD: Wrap complex operations in bash -c
-bash -c 'cd /home/lee/git/high-command && make test && git add . && git commit -m "test results"'
-
-# ✅ GOOD: Environment variables with bash -c
-bash -c 'export LOG_LEVEL=DEBUG && python -m highcommand.server'
-
-# ✅ GOOD: Conditional with bash -c
-bash -c '[[ -f requirements.txt ]] && pip install -r requirements.txt || pip install -e .'
-
-# ❌ BAD: Complex command without bash -c
-cd /path && for i in {1..3}; do python -m pytest; done
-
-# ❌ BAD: Mixing fish and bash syntax
-git add . && git commit -m "msg" || echo "failed"
-
-# ❌ BAD: Complex conditionals without bash -c
-if grep -q "import" file.py; then echo "found"; fi
-```
+| Target | Purpose |
+|--------|---------|
+| `make help` | Show all targets |
+| `make install` | Install dependencies |
+| `make dev` | Install development tools |
+| `make test` | Run tests with coverage |
+| `make test-fast` | Run tests without coverage |
+| `make lint` | Run linters (ruff, mypy) |
+| `make format` | Format code with black and ruff |
+| `make check-all` | Format + lint + test |
+| `make commit-changes` | Add, commit, show status |
+| `make release` | Full quality validation |
+| `make clean` | Remove build artifacts |
+| `make run` | Run MCP server |
+| `make docker-build` | Build Docker image |
+| `make docker-run` | Run Docker container |
+| `make docs` | Build documentation |
+| `make docs-serve` | Serve docs locally |
 
 #### Summary for AI Assistant
 
-**Golden Rule:** When in doubt, use `bash -c 'command'`
+**Golden Rule:** Prefer `make` targets for all operations
 
 1. Check if make target exists → Use `make target`
-2. Otherwise → Wrap in `bash -c '...'`
-3. Only use raw commands for simple Python runs
+2. Otherwise → Use simple Python command or create a new target
+3. Never use complex shell commands directly
 
-This ensures 100% compatibility with fish shell environment while maintaining bash semantics for complex operations.
+This ensures 100% compatibility with all shell environments.
 
 ## Common Tasks
 
@@ -328,36 +288,7 @@ This ensures 100% compatibility with fish shell environment while maintaining ba
 # Edit: highcommand/api_client.py
 async def get_new_endpoint(self) -> Dict[str, Any]:
     logger.info("Fetching new endpoint")
-    try:
-        response = await self._client.get("/endpoint")
-        response.raise_for_status()
-        return response.json()
-    except httpx.HTTPError as e:
-        logger.error("Failed to fetch", error=str(e))
-        raise
-
-# Step 2: Update tools
-# Edit: highcommand/tools.py
-async def get_new_endpoint_tool(self) -> Dict[str, Any]:
-    async with self.client:
-        data = await self.client.get_new_endpoint()
-        return {"status": "success", "data": data}
-
-# Step 3: Register in server
-# Edit: highcommand/server.py - Update list_tools()
-Tool(name="get_new_endpoint", ...)
-
-# Step 4: Handle in call_tool
-# Edit: highcommand/server.py - Update call_tool()
-elif name == "get_new_endpoint":
-    return await self.tools.get_new_endpoint_tool()
-
-# Step 5: Test and validate
-make test
-
-# Step 6: Commit
-bash -c 'git add . && git commit -m "feat: add new endpoint"'
-```elif name == "get_new_endpoint":
+````elif name == "get_new_endpoint":
     return await self.tools.get_new_endpoint_tool()
 ```
 
