@@ -12,8 +12,8 @@ async def main():
     print("Testing get_biomes_tool...")
     result = await tools.get_biomes_tool()
     print(f"  Status: {result['status']}")
-    if result['status'] == 'success':
-        data = result.get('data', {})
+    if result["status"] == "success":
+        data = result.get("data", {})
         if isinstance(data, dict):
             print(f"  Data keys: {list(data.keys())[:5]}")
 
@@ -21,10 +21,11 @@ async def main():
     print("\nTesting get_factions_tool...")
     result = await tools.get_factions_tool()
     print(f"  Status: {result['status']}")
-    if result['status'] == 'success':
-        data = result.get('data', {})
+    if result["status"] == "success":
+        data = result.get("data", {})
         if isinstance(data, dict):
             print(f"  Data keys: {list(data.keys())[:5]}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

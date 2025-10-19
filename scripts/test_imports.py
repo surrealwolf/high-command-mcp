@@ -10,9 +10,11 @@
 try:
     # This will fail if our local mcp package shadows it
     import mcp
+
     print(f"mcp module from: {mcp.__file__}")
     print(f"Has Server? {hasattr(mcp, 'Server')}")
     from highcommand import Server  # noqa: F401
+
     print("✓ Imported Server from mcp SDK")
 except ImportError as e:
     print(f"✗ Import failed: {e}")

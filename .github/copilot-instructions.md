@@ -112,6 +112,37 @@ logger.info("Fetching data", endpoint="/war", timeout=30.0)  # Structured contex
 - `structlog>=23.1.0` - Structured logging
 - `pytest>=7.4.0`, `pytest-asyncio>=0.21.0` - Testing
 
+## Git Workflow & Branch Protection
+
+### Main Branch Protection Rules
+The `main` branch is now protected with the following rules:
+- ✅ **Require 1 PR approval** before merging
+- ✅ **Dismiss stale reviews** when new commits pushed
+- ✅ **Enforce on admins** (rules apply to everyone including repo owner)
+- ✅ **No force pushes** allowed to main
+- ✅ **No branch deletions** allowed
+
+### Required PR Workflow
+```bash
+# ✅ CORRECT: Feature branch → PR → Approved merge
+git checkout -b feature/new-endpoint
+git commit -m "feature: add endpoint"
+git push origin feature/new-endpoint
+gh pr create --base main --head feature/new-endpoint
+# Wait for approval, then merge:
+gh pr merge <pr-number>
+
+# ❌ WRONG: Direct push to main (will fail)
+git push origin main
+# Error: refusing to allow you to create or update a ref
+```
+
+### Branch Naming Convention
+- `feature/*` - New features
+- `bugfix/*` - Bug fixes
+- `docs/*` - Documentation updates
+- `refactor/*` - Code refactoring
+
 ## Build & Deployment
 
 ### Makefile Golden Rules
@@ -145,6 +176,24 @@ logger.info("Fetching data", endpoint="/war", timeout=30.0)  # Structured contex
 | `Makefile` | Development tasks | 15+ targets, bash-enforced |
 
 ## Common Tasks
+
+### Create a PR for New Work
+```bash
+# 1. Create and switch to feature branch
+git checkout -b feature/descriptive-name
+
+# 2. Make your changes and commit
+git commit -m "feature: clear description"
+
+# 3. Push to remote
+git push origin feature/descriptive-name
+
+# 4. Create PR (will need 1 approval before merging)
+gh pr create --base main --head feature/descriptive-name
+
+# 5. After approval, merge to main
+gh pr merge <pr-number>
+```
 
 ### Run All Checks Before Committing
 ```bash

@@ -44,7 +44,7 @@ async def discover_endpoints():
     ]
 
     print("Testing HellHub API Endpoints")
-    print("="*60)
+    print("=" * 60)
 
     async with httpx.AsyncClient() as client:
         results = {"200": [], "404": [], "500": [], "other": []}
@@ -85,5 +85,6 @@ async def discover_endpoints():
         print("\n⚠️  OTHER STATUS CODES:")
         for endpoint, code in results["other"]:
             print(f"  {endpoint:30} ({code})")
+
 
 asyncio.run(discover_endpoints())

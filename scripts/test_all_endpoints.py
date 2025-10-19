@@ -18,7 +18,7 @@ async def test_all_endpoints():
     result = await call_tool("get_war_status", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -28,7 +28,7 @@ async def test_all_endpoints():
     result = await call_tool("get_planets", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -38,7 +38,7 @@ async def test_all_endpoints():
     result = await call_tool("get_statistics", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -48,7 +48,7 @@ async def test_all_endpoints():
     result = await call_tool("get_planet_status", {"planet_index": 0})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -58,7 +58,7 @@ async def test_all_endpoints():
     result = await call_tool("get_biomes", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -68,7 +68,7 @@ async def test_all_endpoints():
     result = await call_tool("get_factions", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'data' in data and isinstance(data['data'], dict):
+    if "data" in data and isinstance(data["data"], dict):
         print(f"   Keys in response: {list(data['data'].keys())[:5]}")
     print()
 
@@ -78,13 +78,14 @@ async def test_all_endpoints():
     result = await call_tool("get_campaign_info", {})
     data = json.loads(result[0].text)
     print(f"   Status: {data['status']}")
-    if 'error' in data:
+    if "error" in data:
         print(f"   Error: {data['error']}")
     print()
 
     print("=" * 70)
     print("  ✅ ALL ENDPOINTS TESTED SUCCESSFULLY")
     print("=" * 70 + "\n")
+
 
 if __name__ == "__main__":
     asyncio.run(test_all_endpoints())

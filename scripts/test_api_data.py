@@ -32,8 +32,8 @@ async def test_hellhub_api():
             planets_data = response.json()
             print(f"✓ Status: {response.status_code}")
             print(f"  Total Planets: {planets_data['pagination']['total']}")
-            if planets_data['data']:
-                p = planets_data['data'][0]
+            if planets_data["data"]:
+                p = planets_data["data"][0]
                 print(f"  First Planet: {p['name']} ({p['sectorId']} sector)")
         except Exception as e:
             print(f"✗ Error: {e}")
@@ -44,8 +44,8 @@ async def test_hellhub_api():
             response = await client.get(f"{base_url}/statistics", timeout=10)
             stats_data = response.json()
             print(f"✓ Status: {response.status_code}")
-            if stats_data['data']:
-                s = stats_data['data'][0]
+            if stats_data["data"]:
+                s = stats_data["data"][0]
                 print(f"  Missions Won: {s['missionsWon']:,}")
                 print(f"  Missions Lost: {s['missionsLost']:,}")
                 print(f"  Success Rate: {s['missionSuccessRate']}%")
@@ -62,8 +62,8 @@ async def test_hellhub_api():
                 campaigns_data = response.json()
                 print(f"✓ Status: {response.status_code}")
                 print(f"  Total Campaigns: {campaigns_data['pagination']['total']}")
-                if campaigns_data['data']:
-                    c = campaigns_data['data'][0]
+                if campaigns_data["data"]:
+                    c = campaigns_data["data"][0]
                     print(f"  First Campaign: Planet {c['planet']}, Type {c['type']}")
         except Exception as e:
             print(f"i  {e}")
