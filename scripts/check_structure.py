@@ -1,6 +1,8 @@
 import asyncio
-import httpx
 import json
+
+import httpx
+
 
 async def test():
     async with httpx.AsyncClient() as c:

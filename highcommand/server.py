@@ -1,18 +1,18 @@
 """MCP Server implementation for Helldivers 2 API."""
+
 import asyncio
 import json
 import logging
 import os
-from typing import Any
 
 from mcp.server import Server
-from mcp.types import (
-    Tool,
-    TextContent,
-    ServerCapabilities,
-)
-from mcp.server.stdio import stdio_server
 from mcp.server.models import InitializationOptions
+from mcp.server.stdio import stdio_server
+from mcp.types import (
+    ServerCapabilities,
+    TextContent,
+    Tool,
+)
 
 from highcommand.tools import HelldiverTools
 
@@ -132,7 +132,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [TextContent(type="text", text=json.dumps(result))]
 
     except Exception as e:
-        logger.error(f"Error calling tool {name}: {str(e)}")
+        logger.error(f"Error calling tool {name}: {e!s}")
         return [
             TextContent(
                 type="text",
@@ -149,7 +149,7 @@ async def main():
         init_options = InitializationOptions(
             server_name="high-command",
             server_version="0.1.0",
-            capabilities=ServerCapabilities(tools={})
+            capabilities=ServerCapabilities(tools={}),
         )
         await server.run(read_stream, write_stream, init_options)
 

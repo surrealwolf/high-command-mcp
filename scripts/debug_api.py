@@ -2,8 +2,8 @@
 """Debug HellHub API response structures"""
 
 import asyncio
+
 import httpx
-import json
 
 
 async def debug_api():

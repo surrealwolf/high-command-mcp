@@ -1,7 +1,6 @@
 """Tests for the API client."""
+
 import pytest
-import httpx
-from unittest.mock import AsyncMock, patch
 
 from highcommand.api_client import HelldiverAPIClient
 
@@ -27,7 +26,7 @@ async def test_get_war_status(api_client):
     # Just verify that the method exists and can be called
     # Real API testing is done in integration tests
     async with api_client:
-        assert hasattr(api_client, 'get_war_status')
+        assert hasattr(api_client, "get_war_status")
         assert callable(api_client.get_war_status)
 
 

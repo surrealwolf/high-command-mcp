@@ -1,8 +1,6 @@
 """Tests for data models."""
-import pytest
-from datetime import datetime
 
-from highcommand.models import WarInfo, CampaignInfo, PlanetInfo, Statistics
+from highcommand.models import CampaignInfo, PlanetInfo, Statistics, WarInfo
 
 
 def test_war_info_model():
@@ -14,9 +12,9 @@ def test_war_info_model():
         "endDate": "2028-02-08T20:04:55.000Z",
         "time": "1970-04-11T20:12:10.000Z",
         "createdAt": "2024-05-22T12:00:10.239Z",
-        "updatedAt": "2024-05-22T12:00:10.239Z"
+        "updatedAt": "2024-05-22T12:00:10.239Z",
     }
-    
+
     war_info = WarInfo(**data)
     assert war_info.id == 1
     assert war_info.index == 801
@@ -30,9 +28,9 @@ def test_campaign_info_model():
         "type": 1,
         "count": 5,
         "createdAt": "2024-05-22T12:00:10.239Z",
-        "updatedAt": "2024-05-22T12:00:10.239Z"
+        "updatedAt": "2024-05-22T12:00:10.239Z",
     }
-    
+
     campaign = CampaignInfo(**data)
     assert campaign.id == 1
     assert campaign.planet == 10
@@ -47,7 +45,7 @@ def test_planet_info_model():
         "sector": "Sector 1",
         "position": {"x": 100, "y": 200},
     }
-    
+
     planet = PlanetInfo(**data)
     assert planet.index == 0
     assert planet.name == "Sicarus Prime"
@@ -73,9 +71,9 @@ def test_statistics_model():
         "missionSuccessRate": 90,
         "accuracy": 100,
         "createdAt": "2024-05-22T12:00:10.239Z",
-        "updatedAt": "2024-05-22T12:00:10.239Z"
+        "updatedAt": "2024-05-22T12:00:10.239Z",
     }
-    
+
     stats = Statistics(**data)
     assert stats.id == 1
     assert stats.missionsWon == 232299033

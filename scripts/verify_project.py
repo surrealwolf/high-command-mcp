@@ -19,11 +19,11 @@ def print_section(title):
 async def verify_imports():
     """Verify all imports work correctly."""
     print_section("1. Verifying Package Imports")
-    
+
     try:
         from mcp.server import Server
         print("✓ MCP SDK imported successfully")
-        from highcommand import HelldiverAPIClient, WarInfo, CampaignInfo
+        from highcommand import CampaignInfo, HelldiverAPIClient, WarInfo
         print("✓ HellCommand package imported successfully")
         from highcommand.tools import HelldiverTools
         print("✓ HellCommand tools imported successfully")
@@ -36,12 +36,12 @@ async def verify_imports():
 async def verify_api_connectivity():
     """Verify API connectivity."""
     print_section("2. Verifying API Connectivity")
-    
+
     import httpx
-    
+
     base_url = "https://api-hellhub-collective.koyeb.app/api"
     results = []
-    
+
     async with httpx.AsyncClient() as client:
         # Test war endpoint
         try:
@@ -55,7 +55,7 @@ async def verify_api_connectivity():
         except Exception as e:
             print(f"✗ /war endpoint: {e}")
             results.append(False)
-        
+
         # Test planets endpoint
         try:
             r = await client.get(f"{base_url}/planets", timeout=10)
@@ -70,7 +70,7 @@ async def verify_api_connectivity():
         except Exception as e:
             print(f"✗ /planets endpoint: {e}")
             results.append(False)
-        
+
         # Test statistics endpoint
         try:
             r = await client.get(f"{base_url}/statistics", timeout=10)
@@ -83,20 +83,20 @@ async def verify_api_connectivity():
         except Exception as e:
             print(f"✗ /statistics endpoint: {e}")
             results.append(False)
-    
+
     return all(results)
 
 
 def verify_tests():
     """Verify all tests pass."""
     print_section("3. Running Test Suite")
-    
+
     result = subprocess.run(
         ["python3", "-m", "pytest", "tests/", "-q"],
         capture_output=True,
         text=True,
     )
-    
+
     output = result.stdout + result.stderr
     if "12 passed" in output:
         print("✓ All 12 tests passed")
@@ -109,9 +109,9 @@ def verify_tests():
 def verify_project_structure():
     """Verify project structure."""
     print_section("4. Verifying Project Structure")
-    
+
     import os
-    
+
     required_files = [
         "highcommand/__init__.py",
         "highcommand/api_client.py",
@@ -125,7 +125,7 @@ def verify_project_structure():
         "pyproject.toml",
         "README.md",
     ]
-    
+
     all_exist = True
     for filepath in required_files:
         if os.path.exists(filepath):
@@ -133,7 +133,7 @@ def verify_project_structure():
         else:
             print(f"✗ {filepath} - MISSING")
             all_exist = False
-    
+
     return all_exist
 
 
@@ -142,24 +142,24 @@ async def main():
     print("\n" + "="*70)
     print("  HIGH-COMMAND MCP SERVER - PROJECT VERIFICATION")
     print("="*70)
-    
+
     results = {
         "Imports": await verify_imports(),
         "API Connectivity": await verify_api_connectivity(),
         "Tests": verify_tests(),
         "Project Structure": verify_project_structure(),
     }
-    
+
     # Print summary
     print_section("SUMMARY")
-    
+
     all_passed = True
     for check, passed in results.items():
         status = "✓ PASS" if passed else "✗ FAIL"
         print(f"{status} - {check}")
         if not passed:
             all_passed = False
-    
+
     print_section("CONCLUSION")
     if all_passed:
         print("✓ ALL SYSTEMS GO - Project is fully functional!")

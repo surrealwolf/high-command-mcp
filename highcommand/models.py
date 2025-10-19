@@ -1,6 +1,8 @@
 """Data models for HellHub Collective API responses."""
+
 from datetime import datetime
-from typing import Optional, List, Dict, Any, Generic, TypeVar
+from typing import Any, Generic, Optional, TypeVar
+
 from pydantic import BaseModel, Field
 
 T = TypeVar("T")
@@ -56,10 +58,10 @@ class PlanetInfo(BaseModel):
     index: int
     name: str
     sector: str
-    position: Dict[str, float]
-    biome: Dict[str, Any] = {}
-    hazards: List[Dict[str, Any]] = []
-    status: Optional[Dict[str, Any]] = None
+    position: dict[str, float]
+    biome: dict[str, Any] = {}
+    hazards: list[dict[str, Any]] = []
+    status: Optional[dict[str, Any]] = None
 
     class Config:
         """Pydantic config."""

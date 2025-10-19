@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Test import resolution"""
-import sys
 
 # When importing mcp from server.py, the local mcp dir might take precedence
 # We need to be careful about naming

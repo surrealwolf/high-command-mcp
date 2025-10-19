@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
-import json
+
 try:
     from playwright.async_api import async_playwright
     has_playwright = True
@@ -12,13 +12,13 @@ async def test_api_with_playwright():
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page()
-        
+
         # Set headers
         await page.set_extra_http_headers({
             "X-Super-Client": "hc.dataknife.ai",
             "X-Super-Contact": "lee@fullmetal.dev",
         })
-        
+
         try:
             response = await page.goto("https://api.helldivers2.io/api/v1/war/status", wait_until="load")
             print(f"Status Code: {response.status}")

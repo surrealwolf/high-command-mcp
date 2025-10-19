@@ -1,8 +1,9 @@
 """HellHub Collective API client for Helldivers 2 data."""
+
+from typing import Any, Optional
+
 import httpx
 import structlog
-from typing import Optional, Dict, Any
-from datetime import datetime
 
 logger = structlog.get_logger(__name__)
 
@@ -31,7 +32,7 @@ class HelldiverAPIClient:
         self._client: Optional[httpx.AsyncClient] = None
 
     @property
-    def headers(self) -> Dict[str, str]:
+    def headers(self) -> dict[str, str]:
         """Get request headers for API requests."""
         return {
             "User-Agent": f"{self.client_id} ({self.contact_email})",
@@ -51,7 +52,7 @@ class HelldiverAPIClient:
         if self._client:
             await self._client.aclose()
 
-    async def get_war_status(self) -> Dict[str, Any]:
+    async def get_war_status(self) -> dict[str, Any]:
         """Get current war status.
 
         Returns:
@@ -69,7 +70,7 @@ class HelldiverAPIClient:
             logger.error("Failed to fetch war status", error=str(e))
             raise
 
-    async def get_planets(self) -> Dict[str, Any]:
+    async def get_planets(self) -> dict[str, Any]:
         """Get planet information.
 
         Returns:
@@ -87,7 +88,7 @@ class HelldiverAPIClient:
             logger.error("Failed to fetch planets", error=str(e))
             raise
 
-    async def get_statistics(self) -> Dict[str, Any]:
+    async def get_statistics(self) -> dict[str, Any]:
         """Get global game statistics.
 
         Returns:
@@ -105,7 +106,7 @@ class HelldiverAPIClient:
             logger.error("Failed to fetch statistics", error=str(e))
             raise
 
-    async def get_planet_status(self, planet_index: int) -> Dict[str, Any]:
+    async def get_planet_status(self, planet_index: int) -> dict[str, Any]:
         """Get status for a specific planet.
 
         Args:
@@ -126,7 +127,7 @@ class HelldiverAPIClient:
             logger.error("Failed to fetch planet status", planet_index=planet_index, error=str(e))
             raise
 
-    async def get_campaign_info(self) -> Dict[str, Any]:
+    async def get_campaign_info(self) -> dict[str, Any]:
         """Get campaign information.
 
         Note: This endpoint is not available in the current HellHub API.
@@ -140,7 +141,7 @@ class HelldiverAPIClient:
         logger.info("Campaign info not available in HellHub API")
         raise RuntimeError("Campaigns endpoint is not available in the HellHub Collective API")
 
-    async def get_biomes(self) -> Dict[str, Any]:
+    async def get_biomes(self) -> dict[str, Any]:
         """Get biome information.
 
         Returns:
@@ -158,7 +159,7 @@ class HelldiverAPIClient:
             logger.error("Failed to fetch biomes", error=str(e))
             raise
 
-    async def get_factions(self) -> Dict[str, Any]:
+    async def get_factions(self) -> dict[str, Any]:
         """Get faction information.
 
         Returns:

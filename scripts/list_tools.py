@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """List all available MCP tools."""
 import asyncio
+
 from highcommand.server import list_tools
+
 
 async def main():
     tools = await list_tools()

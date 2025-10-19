@@ -1,6 +1,6 @@
 """MCP tools for HellHub Collective API."""
-from typing import Any, Dict, Optional
-import json
+
+from typing import Any
 
 from highcommand.api_client import HelldiverAPIClient
 
@@ -21,7 +21,7 @@ class HelldiverTools:
         """
         self.client = HelldiverAPIClient(client_id=client_id, contact_email=contact_email)
 
-    async def get_war_status_tool(self) -> Dict[str, Any]:
+    async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
 
         Returns:
@@ -31,7 +31,7 @@ class HelldiverTools:
             data = await self.client.get_war_status()
             return {"status": "success", "data": data}
 
-    async def get_planets_tool(self) -> Dict[str, Any]:
+    async def get_planets_tool(self) -> dict[str, Any]:
         """Tool to get planet information.
 
         Returns:
@@ -41,7 +41,7 @@ class HelldiverTools:
             data = await self.client.get_planets()
             return {"status": "success", "data": data}
 
-    async def get_statistics_tool(self) -> Dict[str, Any]:
+    async def get_statistics_tool(self) -> dict[str, Any]:
         """Tool to get global statistics.
 
         Returns:
@@ -51,7 +51,7 @@ class HelldiverTools:
             data = await self.client.get_statistics()
             return {"status": "success", "data": data}
 
-    async def get_campaign_info_tool(self) -> Dict[str, Any]:
+    async def get_campaign_info_tool(self) -> dict[str, Any]:
         """Tool to get campaign information.
 
         Note: This endpoint is not available in the current HellHub API.
@@ -65,7 +65,7 @@ class HelldiverTools:
             "error": "Campaigns endpoint is not available in the HellHub Collective API",
         }
 
-    async def get_planet_status_tool(self, planet_index: int) -> Dict[str, Any]:
+    async def get_planet_status_tool(self, planet_index: int) -> dict[str, Any]:
         """Tool to get status for a specific planet.
 
         Args:
@@ -78,7 +78,7 @@ class HelldiverTools:
             data = await self.client.get_planet_status(planet_index)
             return {"status": "success", "data": data}
 
-    async def get_biomes_tool(self) -> Dict[str, Any]:
+    async def get_biomes_tool(self) -> dict[str, Any]:
         """Tool to get biome information.
 
         Returns:
@@ -88,7 +88,7 @@ class HelldiverTools:
             data = await self.client.get_biomes()
             return {"status": "success", "data": data}
 
-    async def get_factions_tool(self) -> Dict[str, Any]:
+    async def get_factions_tool(self) -> dict[str, Any]:
         """Tool to get faction information.
 
         Returns:

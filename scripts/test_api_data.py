@@ -2,8 +2,8 @@
 """Test script to verify HellHub API data retrieval"""
 
 import asyncio
+
 import httpx
-import json
 
 
 async def test_hellhub_api():
@@ -57,7 +57,7 @@ async def test_hellhub_api():
         try:
             response = await client.get(f"{base_url}/campaigns", timeout=10)
             if response.status_code == 404:
-                print(f"ℹ  Campaigns endpoint not available (404)")
+                print("ℹ  Campaigns endpoint not available (404)")
             else:
                 campaigns_data = response.json()
                 print(f"✓ Status: {response.status_code}")
