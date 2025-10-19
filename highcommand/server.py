@@ -16,7 +16,7 @@ from mcp.types import (
     Tool,
 )
 
-from highcommand.tools import HelldiverTools
+from highcommand.tools import HighCommandTools
 
 # Configure logging
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize server and tools
 server = Server("high-command")
-tools = HelldiverTools()
+tools = HighCommandTools()
 
 
 @server.list_tools()

@@ -2,20 +2,20 @@
 
 import pytest
 
-from highcommand.api_client import HelldiverAPIClient
+from highcommand.api_client import HighCommandAPIClient
 
 
 @pytest.fixture
 def api_client():
     """Create an API client instance."""
-    return HelldiverAPIClient()
+    return HighCommandAPIClient()
 
 
 @pytest.mark.asyncio
 async def test_api_client_headers(api_client):
     """Test that API client initializes with minimal headers."""
     headers = api_client.headers
-    # HellHub API doesn't require authentication or custom headers
+    # High-Command API doesn't require authentication or custom headers
     assert isinstance(headers, dict)
     assert len(headers) == 0
 

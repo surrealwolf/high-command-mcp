@@ -1,16 +1,16 @@
-"""MCP tools for HellHub Collective API."""
+"""MCP tools for High-Command API."""
 
 from typing import Any
 
-from highcommand.api_client import HelldiverAPIClient
+from highcommand.api_client import HighCommandAPIClient
 
 
-class HelldiverTools:
-    """Tools for interacting with HellHub Collective API."""
+class HighCommandTools:
+    """Tools for interacting with High-Command API."""
 
     def __init__(self):
         """Initialize the tools."""
-        self.client = HelldiverAPIClient()
+        self.client = HighCommandAPIClient()
 
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
@@ -45,16 +45,12 @@ class HelldiverTools:
     async def get_campaign_info_tool(self) -> dict[str, Any]:
         """Tool to get campaign information.
 
-        Note: This endpoint is not available in the current HellHub API.
-
         Returns:
-            Error response indicating endpoint unavailability
+            JSON formatted campaign data
         """
-        return {
-            "status": "error",
-            "data": None,
-            "error": "Campaigns endpoint is not available in the HellHub Collective API",
-        }
+        async with self.client:
+            data = await self.client.get_campaign_info()
+            return {"status": "success", "data": data}
 
     async def get_planet_status_tool(self, planet_index: int) -> dict[str, Any]:
         """Tool to get status for a specific planet.
