@@ -1,4 +1,4 @@
-.PHONY: help install dev test lint format clean docker-build docker-run docs
+.PHONY: help install dev test lint format clean docker-build docker-run docs run
 
 help:
 	@echo "High-Command - Helldivers 2 MCP Server"
@@ -6,6 +6,7 @@ help:
 	@echo "Available targets:"
 	@echo "  install        Install dependencies"
 	@echo "  dev            Install development dependencies"
+	@echo "  run            Run the MCP server"
 	@echo "  test           Run tests with coverage"
 	@echo "  test-fast      Run tests without coverage"
 	@echo "  lint           Run linters (ruff, mypy)"
@@ -22,6 +23,9 @@ install:
 
 dev:
 	pip install -e ".[dev]"
+
+run:
+	python -m highcommand.server
 
 test:
 	pytest
