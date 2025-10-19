@@ -335,6 +335,33 @@ make check                   # Run linters and tests
 venv/bin/python3 verify_project.py  # Full project verification
 ```
 
+## Git Commit Best Practices
+
+When committing changes, use simple single-line commands for reliability:
+
+```bash
+# ✅ GOOD: Simple commit with single-line message
+git commit -m "fix: update Python version to 3.14"
+
+# ✅ GOOD: Use git commit -m with simple message, then git commit --amend for details
+git add file.txt; git commit -m "feature: add new feature"
+
+# ❌ BAD: Multi-line commit messages with complex escaping
+git commit -m "feature: long description
+with multiple lines"
+
+# ❌ BAD: Complex commit messages with special characters
+git commit -m "fix: update version (3.13 -> 3.14)"
+```
+
+For detailed commit messages:
+```bash
+# Use git commit with -m for summary, or use editor for full message
+git add .; git commit -m "feature: short summary" && git log -1
+```
+
+Pro tip: Use descriptive single-line messages that are clear and concise. If more detail is needed, the git commit --amend or interactive rebase can provide it later.
+
 ## Resources
 
 - [Python asyncio docs](https://docs.python.org/3/library/asyncio.html)
