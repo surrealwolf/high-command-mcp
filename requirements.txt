@@ -1,0 +1,17 @@
+# High-Command MCP Server - Core Dependencies
+# Python 3.9+ required
+
+# Core MCP Server
+mcp>=0.1.0
+
+# HTTP Client
+httpx>=0.24.0
+
+# Data Validation
+pydantic>=2.0.0
+
+# Environment Configuration
+python-dotenv>=1.0.0
+
+# Structured Logging
+structlog>=23.1.0

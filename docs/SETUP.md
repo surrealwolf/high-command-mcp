@@ -26,12 +26,30 @@
 3. **Install the package**
    ```bash
    make install
+   # Or manually:
+   pip install -r requirements.txt
    ```
 
 4. **Install development dependencies** (for development)
    ```bash
    make dev
+   # Or manually:
+   pip install -r requirements-dev.txt
    ```
+
+### Installing Optional Features
+
+**HTTP Support (for Kubernetes)**
+```bash
+pip install -r requirements-http.txt
+```
+
+**Kubernetes Deployment**
+```bash
+pip install -r requirements-kubernetes.txt
+```
+
+**See [REQUIREMENTS.md](../REQUIREMENTS.md) for all installation options.**
 
 ### Option 2: Docker
 

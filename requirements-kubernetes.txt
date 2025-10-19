@@ -1,0 +1,7 @@
+# High-Command MCP Server - Kubernetes Deployment
+# Install with: pip install -r requirements-kubernetes.txt
+
+-r requirements-http.txt
+
+# Kubernetes Python Client
+python-kubernetes>=28.0.0
