@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy project files
 COPY pyproject.toml README.md /app/
 COPY highcommand/ /app/highcommand/
-
+COPY scripts/ /app/scripts/
 # Install Python dependencies
 RUN pip install --no-cache-dir -e .
 
