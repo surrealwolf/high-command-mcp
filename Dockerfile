@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy project files
 COPY pyproject.toml README.md /app/
-COPY mcp/ /app/mcp/
+COPY highcommand/ /app/highcommand/
 COPY scripts/ /app/scripts/
 
 # Install Python dependencies
@@ -24,4 +24,4 @@ RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
 # Run MCP server
-ENTRYPOINT ["python", "-m", "mcp.server"]
+ENTRYPOINT ["python", "-m", "highcommand.server"]
