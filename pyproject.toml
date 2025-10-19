@@ -42,7 +42,6 @@ dev = [
     "black>=23.7.0",
     "ruff>=0.0.280",
     "mypy>=1.4.1",
-    "types-httpx>=0.24.0",
 ]
 
 test = [

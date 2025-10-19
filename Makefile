@@ -1,9 +1,18 @@
-.PHONY: help install dev test lint format clean docker-build docker-run docs run
+.PHONY: help install dev test lint format clean docker-build docker-run docs run venv
+
+# Use venv Python if available, otherwise fall back to system python
+PYTHON := $(shell [ -d venv ] && echo venv/bin/python3 || echo python3)
+PIP := $(shell [ -d venv ] && echo venv/bin/pip || echo pip)
+PYTEST := $(shell [ -d venv ] && echo venv/bin/pytest || echo pytest)
+RUFF := $(shell [ -d venv ] && echo venv/bin/ruff || echo ruff)
+BLACK := $(shell [ -d venv ] && echo venv/bin/black || echo black)
+MYPY := $(shell [ -d venv ] && echo venv/bin/mypy || echo mypy)
 
 help:
 	@echo "High-Command - Helldivers 2 MCP Server"
 	@echo ""
 	@echo "Available targets:"
+	@echo "  venv           Create virtual environment"
 	@echo "  install        Install dependencies"
 	@echo "  dev            Install development dependencies"
 	@echo "  run            Run the MCP server"
@@ -18,28 +27,32 @@ help:
 	@echo "  docs-serve     Serve documentation locally"
 	@echo "  help           Show this help message"
 
-install:
-	pip install -e .
+venv:
+	python3 -m venv venv
+	venv/bin/pip install --upgrade pip setuptools wheel
 
-dev:
-	pip install -e ".[dev]"
+install: venv
+	$(PIP) install -e .
+
+dev: venv
+	$(PIP) install -e ".[dev]"
 
 run:
-	python -m highcommand.server
+	$(PYTHON) -m highcommand.server
 
 test:
-	pytest
+	$(PYTEST)
 
 test-fast:
-	pytest --no-cov -q
+	$(PYTEST) --no-cov -q
 
 lint:
-	ruff check .
-	mypy mcp --ignore-missing-imports
+	$(RUFF) check .
+	$(MYPY) highcommand --ignore-missing-imports
 
 format:
-	black mcp tests scripts
-	ruff check --fix .
+	$(BLACK) highcommand tests scripts
+	$(RUFF) check --fix .
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
@@ -62,7 +75,7 @@ docs:
 
 docs-serve: docs
 	@echo "Serving docs at http://localhost:8000"
-	python -m http.server 8000 -d docs/_build/html
+	$(PYTHON) -m http.server 8000 -d docs/_build/html
 
 check: lint test
 
