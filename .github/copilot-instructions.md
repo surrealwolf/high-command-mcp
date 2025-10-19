@@ -159,7 +159,7 @@ The repository is configured with **automatic Copilot code review** on all PRs t
 
 To enable Copilot auto-review on a ruleset:
 ```bash
-# 1. Go to https://github.com/surrealwolf/high-command-mcp/settings/rules
+# 1. Go to https://github.com/{owner}/{repo}/settings/rules
 # 2. Click the "Require Copilot Code Review" ruleset
 # 3. Scroll to "Branch rules" section
 # 4. Check "Automatically request Copilot code review"
