@@ -226,38 +226,106 @@ All documentation moved to `docs/`:
 
 ## Terminal Command Best Practices
 
-### For GitHub Copilot Terminal Execution
-When using run_in_terminal tool, follow these guidelines to ensure compatibility:
+### For GitHub Copilot Terminal Execution (Fish Shell Environment)
 
-1. **Single-line commands are preferred**
-   - ✅ Good: `python3 -m pytest tests/`
-   - ✅ Good: `pip install package && python3 -c "import package"`
-   - ❌ Avoid: Multi-line with backslash continuation
+When using run_in_terminal tool, follow these guidelines to ensure compatibility with fish shell:
 
-2. **Use semicolons for command chaining**
-   - ✅ Good: `cd dir; make test`
-   - ✅ Good: `python3 --version; pip list`
-   - ❌ Avoid: Pipe chains that expect bash-specific features
+#### Priority 1: Use Makefile Targets (Preferred)
+Always prefer `make` targets for common operations:
+- ✅ **Excellent**: `make test` (bash, reproducible)
+- ✅ **Excellent**: `make install` (bash, reproducible)
+- ✅ **Excellent**: `make format` (bash, reproducible)
+- ❌ **Avoid**: Complex shell commands when a make target exists
 
-3. **Wrap complex operations in bash when needed**
+Makefile enforces bash shell (`SHELL := /bin/bash`), ensuring compatibility.
+
+#### Priority 2: Wrap Non-Make Commands in `bash -c`
+For all other terminal commands, wrap in `bash -c '...'`:
+
+1. **Single operations wrapped in bash -c**
+   - ✅ Good: `bash -c 'cd /path && python -m pytest tests/'`
+   - ✅ Good: `bash -c 'git add . && git commit -m "message"'`
    - ✅ Good: `bash -c 'for i in {1..3}; do echo $i; done'`
-   - ✅ Good: `bash -c 'python3 -m pytest && git add .'`
+   - ❌ Avoid: `cd /path; python -m pytest` (without bash -c)
+   - ❌ Avoid: `for i in {1..3}; do echo $i; done` (fish interprets differently)
 
-4. **Shell-agnostic patterns**
-   - ✅ Good: Use `make` targets for complex operations
-   - ✅ Good: Use single Python scripts instead of shell scripts
-   - ❌ Avoid: Fish-specific syntax like `and`/`or` operators
+2. **Proper command structure**
+   ```bash
+   bash -c 'command1 && command2 || command3'
+   bash -c 'export VAR=value && python script.py'
+   bash -c '[[ -f file ]] && echo "exists"'
+   ```
 
-5. **Environment variables**
-   - ✅ Good: `python3 -c "import os; print(os.environ['PATH'])"`
-   - ✅ Good: `export VAR=value && python3 script.py`
-   - ❌ Avoid: Complex variable substitution patterns
+3. **What to AVOID**
+   - ❌ `&&` or `||` outside bash -c (fish uses `and`/`or`)
+   - ❌ `{ ... }` braces outside bash -c (syntax conflict)
+   - ❌ `$(...)` command substitution without bash -c (behaves differently)
+   - ❌ Line continuations with backslash (not portable)
+   - ❌ `for`, `while`, `if` without bash -c (fish has different syntax)
+
+#### Priority 3: Single Python Commands
+Direct Python commands work in fish if no bash-specific syntax:
+
+- ✅ `python3 --version` (simple)
+- ✅ `python3 -m pytest tests/test_api_client.py` (simple)
+- ✅ `python3 -c "import sys; print(sys.version)"` (simple)
+- ⚠️ `python3 -c "import os; print(os.environ.get('PATH'))"` (wrapped better)
+
+#### Quick Reference
+
+| Command Type | Method | Example |
+|--------------|--------|---------|
+| Test/build/format | Make | `make test` |
+| Complex operations | Bash -c | `bash -c 'cd dir && make test && git add .'` |
+| Single Python | Direct | `python -m pytest tests/` |
+| Environment setup | Bash -c | `bash -c 'export VAR=value && python script.py'` |
+| File operations | Bash -c | `bash -c '[[ -f file ]] && cat file'` |
+| Loops/conditions | Bash -c | `bash -c 'for i in {1..3}; do echo $i; done'` |
+
+#### Real-World Examples
+
+```bash
+# ✅ GOOD: Use make targets
+make test
+
+# ✅ GOOD: Simple Python command
+python -m pytest tests/test_api_client.py
+
+# ✅ GOOD: Wrap complex operations in bash -c
+bash -c 'cd /home/lee/git/high-command && make test && git add . && git commit -m "test results"'
+
+# ✅ GOOD: Environment variables with bash -c
+bash -c 'export LOG_LEVEL=DEBUG && python -m highcommand.server'
+
+# ✅ GOOD: Conditional with bash -c
+bash -c '[[ -f requirements.txt ]] && pip install -r requirements.txt || pip install -e .'
+
+# ❌ BAD: Complex command without bash -c
+cd /path && for i in {1..3}; do python -m pytest; done
+
+# ❌ BAD: Mixing fish and bash syntax
+git add . && git commit -m "msg" || echo "failed"
+
+# ❌ BAD: Complex conditionals without bash -c
+if grep -q "import" file.py; then echo "found"; fi
+```
+
+#### Summary for AI Assistant
+
+**Golden Rule:** When in doubt, use `bash -c 'command'`
+
+1. Check if make target exists → Use `make target`
+2. Otherwise → Wrap in `bash -c '...'`
+3. Only use raw commands for simple Python runs
+
+This ensures 100% compatibility with fish shell environment while maintaining bash semantics for complex operations.
 
 ## Common Tasks
 
 ### Add a new API endpoint
-```python
-# 1. In highcommand/api_client.py
+```bash
+# Step 1: Update API client
+# Edit: highcommand/api_client.py
 async def get_new_endpoint(self) -> Dict[str, Any]:
     logger.info("Fetching new endpoint")
     try:
@@ -268,17 +336,28 @@ async def get_new_endpoint(self) -> Dict[str, Any]:
         logger.error("Failed to fetch", error=str(e))
         raise
 
-# 2. In highcommand/tools.py
+# Step 2: Update tools
+# Edit: highcommand/tools.py
 async def get_new_endpoint_tool(self) -> Dict[str, Any]:
     async with self.client:
         data = await self.client.get_new_endpoint()
         return {"status": "success", "data": data}
 
-# 3. In highcommand/server.py - Update list_tools()
+# Step 3: Register in server
+# Edit: highcommand/server.py - Update list_tools()
 Tool(name="get_new_endpoint", ...)
 
-# 4. In highcommand/server.py - Update call_tool()
+# Step 4: Handle in call_tool
+# Edit: highcommand/server.py - Update call_tool()
 elif name == "get_new_endpoint":
+    return await self.tools.get_new_endpoint_tool()
+
+# Step 5: Test and validate
+make test
+
+# Step 6: Commit
+bash -c 'git add . && git commit -m "feat: add new endpoint"'
+```elif name == "get_new_endpoint":
     return await self.tools.get_new_endpoint_tool()
 ```
 
