@@ -117,7 +117,7 @@ logger.info("Fetching data", endpoint="/war", timeout=30.0)  # Structured contex
 ### Main Branch Protection Rules
 The `main` branch is now protected with the following rules:
 - ✅ **Require 1 PR approval** before merging
-- ✅ **Require Copilot code review** (via CODEOWNERS)
+- ✅ **Require Copilot code review** (via ruleset)
 - ✅ **Dismiss stale reviews** when new commits pushed
 - ✅ **Enforce on admins** (rules apply to everyone including repo owner)
 - ✅ **No force pushes** allowed to main
