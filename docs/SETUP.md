@@ -98,10 +98,6 @@ This starts the MCP server on stdio transport (default for Claude integration).
 
 ## Common Issues
 
-````
-
-## Common Issues
-
 ### Issue: "ImportError: No module named 'mcp'"
 
 **Solution**: Make sure you've installed the package:
