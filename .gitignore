@@ -1,0 +1,64 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.egg-info/
+*.egg
+dist/
+build/
+.Python
+
+# Virtual Environments
+.venv
+venv/
+env/
+ENV/
+.env
+.env.local
+.env.*.local
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+*.cover
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# Development
+*.log
+*.pot
+*.mo
+.cache
+.hypothesis/
+
+# Docker
+docker_build_logs/
+
+# Project specific
+asyncio/
+json/
+ui/
+.coverage
+.pytest_cache/
+
+# Generated files
+htmlcov/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db

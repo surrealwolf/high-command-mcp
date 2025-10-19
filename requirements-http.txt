@@ -1,0 +1,10 @@
+# High-Command MCP Server - HTTP/Web Support
+# Install with: pip install -r requirements-http.txt
+
+-r requirements.txt
+
+# FastAPI Web Framework
+fastapi>=0.100.0
+
+# ASGI Server
+uvicorn>=0.23.0

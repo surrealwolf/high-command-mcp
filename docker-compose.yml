@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  high-command:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: high-command
+    environment:
+      - LOG_LEVEL=INFO
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
