@@ -73,6 +73,43 @@ make lint
 make check
 ```
 
+## 💻 VS Code Integration
+
+The High-Command MCP server integrates seamlessly with VS Code and GitHub Copilot.
+
+### Setup
+
+1. **Install dependencies**:
+   ```bash
+   make dev
+   ```
+
+2. **Add to VS Code MCP config** (`~/.config/Code/User/mcp.json`):
+   ```json
+   {
+     "servers": {
+       "high-command": {
+         "type": "stdio",
+         "command": "python",
+         "args": ["-m", "highcommand.server"],
+         "cwd": "/path/to/high-command-mcp"
+       }
+     }
+   }
+   ```
+
+3. **Reload VS Code** and start using the tools with Copilot
+
+### Example Usage
+
+```
+/ask Get the current war status from Helldivers 2
+/ask List all available planets
+/ask Show me the game statistics
+```
+
+**Full Guide**: See [docs/VSCODE_SETUP.md](docs/VSCODE_SETUP.md)
+
 ## API Tools
 
 The MCP server exposes the following tools:
