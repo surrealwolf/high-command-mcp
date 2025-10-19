@@ -25,18 +25,18 @@ jobs:
             });
 
             if (pullRequests.length > 0) {
-              const pullNumber = pullRequests[0].number;
+              const pr = pullRequests[0];
+              const pullNumber = pr?.number;
               
               // Check if PR is from a fork (dependabot, etc.)
-              const pr = pullRequests[0];
               // Only approve PRs from trusted authors
               const trustedAssociations = ['MEMBER', 'OWNER', 'COLLABORATOR'];
-              if (pr.head.repo === null) {
+              if (pr?.head?.repo === null) {
                 console.log('Skipping approval for fork PR');
                 return;
               }
-              if (!trustedAssociations.includes(pr.author_association)) {
-                console.log(`Skipping approval for PR author with association: ${pr.author_association}`);
+              if (!trustedAssociations.includes(pr?.author_association)) {
+                console.log(`Skipping approval for PR author with association: ${pr?.author_association}`);
                 return;
               }
 
