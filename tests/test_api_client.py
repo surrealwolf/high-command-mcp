@@ -13,11 +13,11 @@ def api_client():
 
 @pytest.mark.asyncio
 async def test_api_client_headers(api_client):
-    """Test that API client sets correct headers."""
+    """Test that API client initializes with minimal headers."""
     headers = api_client.headers
-    assert "User-Agent" in headers
-    assert "high-command" in headers["User-Agent"]
-    assert "lee@fullmetal.dev" in headers["User-Agent"]
+    # HellHub API doesn't require authentication or custom headers
+    assert isinstance(headers, dict)
+    assert len(headers) == 0
 
 
 @pytest.mark.asyncio

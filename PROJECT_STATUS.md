@@ -70,7 +70,6 @@ high-command/
 ├── .github/
 │   ├── copilot-instructions.md  # Development guide
 │   └── workflows/
-├── scripts/                 # Utility scripts
 ├── Makefile                 # Development tasks
 ├── Dockerfile               # Container definition
 ├── docker-compose.yml       # Docker Compose config

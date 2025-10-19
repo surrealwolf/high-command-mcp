@@ -117,6 +117,7 @@ logger.info("Fetching data", endpoint="/war", timeout=30.0)  # Structured contex
 ### Main Branch Protection Rules
 The `main` branch is now protected with the following rules:
 - ✅ **Require 1 PR approval** before merging
+- ✅ **Require Copilot code review** (via ruleset)
 - ✅ **Dismiss stale reviews** when new commits pushed
 - ✅ **Enforce on admins** (rules apply to everyone including repo owner)
 - ✅ **No force pushes** allowed to main
@@ -124,12 +125,13 @@ The `main` branch is now protected with the following rules:
 
 ### Required PR Workflow
 ```bash
-# ✅ CORRECT: Feature branch → PR → Approved merge
+# ✅ CORRECT: Feature branch → PR → Copilot review → You approve → Merge
 git checkout -b feature/new-endpoint
 git commit -m "feature: add endpoint"
 git push origin feature/new-endpoint
 gh pr create --base main --head feature/new-endpoint
-# Wait for approval, then merge:
+# Copilot will automatically review your PR
+# Once Copilot reviews, you can approve and merge:
 gh pr merge <pr-number>
 
 # ❌ WRONG: Direct push to main (will fail)
@@ -142,6 +144,51 @@ git push origin main
 - `bugfix/*` - Bug fixes
 - `docs/*` - Documentation updates
 - `refactor/*` - Code refactoring
+- `chore/*` - Chores and maintenance
+
+### Copilot Automatic Code Review
+
+The repository is configured with **automatic Copilot code review** on all PRs to `main`:
+
+1. **Automatic Review**: Copilot automatically reviews every pull request without manual request
+2. **Configuration**: Set up via GitHub Settings → Rules → Rulesets
+3. **Review Behavior**:
+   - Copilot reviews on PR creation
+   - Reviews new pushes to PR (if enabled in ruleset)
+   - Can review draft PRs (if enabled in ruleset)
+
+To enable Copilot auto-review on a ruleset:
+```bash
+# 1. Go to https://github.com/{owner}/{repo}/settings/rules
+# 2. Click the "Require Copilot Code Review" ruleset
+# 3. Scroll to "Branch rules" section
+# 4. Check "Automatically request Copilot code review"
+# 5. Optionally enable:
+#    - "Review new pushes" - review all updates to PR
+#    - "Review draft pull requests" - review draft PRs
+# 6. Click "Save"
+```
+
+### Automatic PR Approval
+
+The repository has a **GitHub Actions workflow** that automatically approves PRs when all pipeline checks pass:
+
+1. **When It Triggers**: After Tests and Docker Build workflows complete successfully
+2. **What It Does**: Creates an approval review using `github-actions[bot]`
+3. **Approval Counts**: The approval from `github-actions[bot]` satisfies the "1 approval required" branch protection rule
+4. **Workflow**: `.github/workflows/auto-approve.yml`
+
+**Complete PR Flow:**
+1. ✅ Create feature branch and open PR
+2. ✅ Copilot automatically reviews the PR
+3. ✅ Pipeline runs (tests, linters, Docker build)
+4. ✅ If all checks pass: `github-actions[bot]` approves automatically
+5. ✅ PR is now mergeable (has 1 approval)
+6. ✅ Merge PR to main
+
+**Manual Approval Still Works:**
+- If you prefer to review and approve manually, you can do that instead
+- The auto-approval doesn't prevent manual reviews
 
 ## Build & Deployment
 

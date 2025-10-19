@@ -200,9 +200,6 @@ high-command/
 ├── tests/                  # Test suite
 │   ├── test_api_client.py
 │   └── test_models.py
-├── scripts/                # Utility scripts
-│   ├── test_api.py         # API connectivity test
-│   └── run_server.py       # Development server runner
 ├── docs/                   # Documentation
 ├── Makefile                # Build and development tasks
 ├── Dockerfile              # Docker container definition
@@ -221,10 +218,7 @@ make docker-build
 ### Running the Container
 
 ```bash
-docker run -it --rm \
-  -e X_SUPER_CLIENT=hc.dataknife.ai \
-  -e X_SUPER_CONTACT=lee@fullmetal.dev \
-  high-command:latest
+docker run -it --rm high-command:latest
 ```
 
 ### Using Docker Compose
@@ -235,8 +229,6 @@ docker-compose up
 
 ## Environment Variables
 
-- `X_SUPER_CLIENT`: Client identifier for API requests (default: `hc.dataknife.ai`)
-- `X_SUPER_CONTACT`: Contact email for API requests (default: `lee@fullmetal.dev`)
 - `LOG_LEVEL`: Logging level (default: `INFO`)
 
 ## Development

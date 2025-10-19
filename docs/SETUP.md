@@ -75,37 +75,10 @@ pip install -r requirements-kubernetes.txt
    nano .env
    ```
 
-3. **Required environment variables:**
-   - `X_SUPER_CLIENT`: API client identifier
-   - `X_SUPER_CONTACT`: Contact email for API
+3. **Optional environment variables:**
    - `LOG_LEVEL`: Logging level (default: INFO)
 
 ## Verification
-
-### Test API Connection
-
-```bash
-python scripts/test_api.py
-```
-
-Expected output:
-```
-Testing API connectivity...
-
-1. Fetching war status...
-   ✓ War ID: 1
-
-2. Fetching campaigns...
-   ✓ Found X campaign(s)
-
-3. Fetching planets...
-   ✓ Found X planet(s)
-
-4. Fetching assignments...
-   ✓ Found X assignment(s)
-
-✓ All API endpoints are working!
-```
 
 ### Run Tests
 
@@ -113,18 +86,15 @@ Testing API connectivity...
 make test
 ```
 
-This will run all tests with coverage report.
+This will run all unit tests with coverage report.
 
-### Start Development Server
+### Test the MCP Server
 
 ```bash
-python -m mcp.server
+python -m highcommand.server
 ```
 
-Or using the script:
-```bash
-python scripts/run_server.py
-```
+This starts the MCP server on stdio transport (default for Claude integration).
 
 ## Common Issues
 
@@ -188,10 +158,10 @@ make dev
 
 ```
 high-command/
-├── mcp/                 # Main MCP server code
+├── highcommand/         # Main MCP server code
 ├── tests/               # Test files
-├── scripts/             # Utility scripts
 ├── docs/                # Documentation
+├── .github/             # GitHub workflows and instructions
 ├── Makefile             # Development tasks
 ├── Dockerfile           # Container definition
 ├── pyproject.toml       # Python configuration

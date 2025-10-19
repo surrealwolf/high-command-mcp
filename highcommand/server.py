@@ -24,10 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize server and tools
 server = Server("high-command")
-tools = HelldiverTools(
-    client_id=os.getenv("X_SUPER_CLIENT", "hc.dataknife.ai"),
-    contact_email=os.getenv("X_SUPER_CONTACT", "lee@fullmetal.dev"),
-)
+tools = HelldiverTools()
 
 
 @server.list_tools()

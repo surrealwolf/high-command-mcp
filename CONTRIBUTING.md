@@ -47,10 +47,9 @@ Be respectful and professional in all interactions.
 ### Project Structure
 
 - **`highcommand/`** - Main package code
-- **`tests/`** - Unit tests and demo scripts
+- **`tests/`** - Unit tests
 - **`docs/`** - Project documentation
 - **`.github/`** - GitHub Actions workflows and development instructions
-- **`scripts/`** - Utility scripts
 
 ### Adding New Features
 
