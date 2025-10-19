@@ -57,7 +57,7 @@ async def test_hellhub_api():
         try:
             response = await client.get(f"{base_url}/campaigns", timeout=10)
             if response.status_code == 404:
-                print("ℹ  Campaigns endpoint not available (404)")
+                print("i  Campaigns endpoint not available (404)")
             else:
                 campaigns_data = response.json()
                 print(f"✓ Status: {response.status_code}")
@@ -66,7 +66,7 @@ async def test_hellhub_api():
                     c = campaigns_data['data'][0]
                     print(f"  First Campaign: Planet {c['planet']}, Type {c['type']}")
         except Exception as e:
-            print(f"ℹ  {e}")
+            print(f"i  {e}")
 
         print("\n" + "=" * 50)
         print("✓ API Testing Complete!")

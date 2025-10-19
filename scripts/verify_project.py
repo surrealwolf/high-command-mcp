@@ -21,11 +21,15 @@ async def verify_imports():
     print_section("1. Verifying Package Imports")
 
     try:
-        from mcp.server import Server
+        from mcp.server import Server  # noqa: F401
         print("✓ MCP SDK imported successfully")
-        from highcommand import CampaignInfo, HelldiverAPIClient, WarInfo
+        from highcommand import (  # noqa: F401
+            CampaignInfo,
+            HelldiverAPIClient,
+            WarInfo,
+        )
         print("✓ HellCommand package imported successfully")
-        from highcommand.tools import HelldiverTools
+        from highcommand.tools import HelldiverTools  # noqa: F401
         print("✓ HellCommand tools imported successfully")
         return True
     except ImportError as e:
