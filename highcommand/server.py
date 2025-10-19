@@ -10,6 +10,7 @@ from mcp.types import (
     Tool,
     TextContent,
 )
+from mcp import stdio_server
 
 from highcommand.tools import HelldiverTools
 
@@ -141,8 +142,8 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
 async def main():
     """Run the MCP server."""
     logger.info("Starting Helldivers 2 MCP Server")
-    async with server:
-        await server.wait_for_shutdown()
+    async with stdio_server(server):
+        logger.info("MCP Server started successfully and waiting for connections...")
 
 
 if __name__ == "__main__":

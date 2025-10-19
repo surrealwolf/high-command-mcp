@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Lee", email = "lee@fullmetal.dev"}
+    {name = "Lee Chapman", email = "lee@fullmetal.dev"}
 ]
 keywords = ["mcp", "helldivers2", "api", "server"]
 classifiers = [
@@ -22,6 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Games/Entertainment",
 ]
 
@@ -57,13 +58,13 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/high-command"
-Documentation = "https://high-command.readthedocs.io"
-Repository = "https://github.com/yourusername/high-command.git"
-"Bug Tracker" = "https://github.com/yourusername/high-command/issues"
+Homepage = "https://github.com/surrealwolf/high-command"
+Documentation = "https://github.com/surrealwolf/high-command/blob/main/docs/"
+Repository = "https://github.com/surrealwolf/high-command.git"
+"Bug Tracker" = "https://github.com/surrealwolf/high-command/issues"
 
 [tool.setuptools]
-packages = ["mcp"]
+packages = ["highcommand"]
 
 [tool.black]
 line-length = 100
@@ -99,4 +100,4 @@ disallow_incomplete_defs = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "--cov=mcp --cov-report=term-missing --cov-report=html"
+addopts = "--cov=highcommand --cov-report=term-missing --cov-report=html"
