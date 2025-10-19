@@ -1,0 +1,59 @@
+name: Auto Approve
+
+on:
+  workflow_run:
+    workflows: [Tests, Build Docker Image]
+    types: [completed]
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Approve PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: `${context.repo.owner}:${github.event.workflow_run.head_branch}`
+            });
+
+            if (pullRequests.length > 0) {
+              const pullNumber = pullRequests[0].number;
+              
+              // Check if PR is from a fork (dependabot, etc.)
+              const pr = pullRequests[0];
+              if (pr.head.repo === null) {
+                console.log('Skipping approval for fork PR');
+                return;
+              }
+
+              // Get existing reviews
+              const { data: reviews } = await github.rest.pulls.listReviews({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pullNumber
+              });
+
+              const botApproved = reviews.some(r => 
+                r.user.login === 'github-actions[bot]' && r.state === 'APPROVED'
+              );
+
+              if (!botApproved) {
+                await github.rest.pulls.createReview({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pullNumber,
+                  event: 'APPROVE',
+                  body: '✅ All pipeline checks passed. PR auto-approved by GitHub Actions.'
+                });
+                console.log(`Approved PR #${pullNumber}`);
+              } else {
+                console.log(`PR #${pullNumber} already approved`);
+              }
+            }

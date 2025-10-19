@@ -169,6 +169,27 @@ To enable Copilot auto-review on a ruleset:
 # 6. Click "Save"
 ```
 
+### Automatic PR Approval
+
+The repository has a **GitHub Actions workflow** that automatically approves PRs when all pipeline checks pass:
+
+1. **When It Triggers**: After Tests and Docker Build workflows complete successfully
+2. **What It Does**: Creates an approval review using `github-actions[bot]`
+3. **Approval Counts**: The approval from `github-actions[bot]` satisfies the "1 approval required" branch protection rule
+4. **Workflow**: `.github/workflows/auto-approve.yml`
+
+**Complete PR Flow:**
+1. ✅ Create feature branch and open PR
+2. ✅ Copilot automatically reviews the PR
+3. ✅ Pipeline runs (tests, linters, Docker build)
+4. ✅ If all checks pass: `github-actions[bot]` approves automatically
+5. ✅ PR is now mergeable (has 1 approval)
+6. ✅ Merge PR to main
+
+**Manual Approval Still Works:**
+- If you prefer to review and approve manually, you can do that instead
+- The auto-approval doesn't prevent manual reviews
+
 ## Build & Deployment
 
 ### Makefile Golden Rules
