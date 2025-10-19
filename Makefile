@@ -1,4 +1,4 @@
-.PHONY: help install dev test lint format clean docker-build docker-run docs run venv
+.PHONY: help install dev test lint format clean docker-build docker-run docs run venv check all check-all commit-changes release
 
 # Force use of bash shell (required for make to work properly with line continuations)
 SHELL := /bin/bash
@@ -29,6 +29,10 @@ help:
 	@echo "  docker-run     Run Docker container"
 	@echo "  docs           Build documentation"
 	@echo "  docs-serve     Serve documentation locally"
+	@echo "  check          Run linters and tests"
+	@echo "  check-all      Format, lint, and test (quality gate)"
+	@echo "  commit-changes Git add, commit, and status"
+	@echo "  release        Format, lint, test, and prepare release"
 	@echo "  help           Show this help message"
 
 venv:
@@ -84,3 +88,22 @@ docs-serve: docs
 check: lint test
 
 all: clean install lint test
+
+# Multi-step targets
+
+check-all: format lint test
+	@echo "✅ All checks passed!"
+
+commit-changes:
+	@echo "Adding changes..."
+	git add -A
+	@echo "Enter commit message: " && read msg; \
+	git commit -m "$$msg"
+	@echo ""
+	@echo "Git status:"
+	git status
+
+release: clean check-all
+	@echo ""
+	@echo "✅ Release ready!"
+	@echo "Run: git push"
