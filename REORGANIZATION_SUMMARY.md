@@ -83,13 +83,10 @@ high-command/
 │   ├── api_client.py
 │   ├── models.py
 │   └── tools.py
-├── tests/                        ← TESTS & DEMOS (organized here)
+├── tests/                        ← TESTS (organized here)
 │   ├── test_api_client.py
 │   ├── test_models.py
-│   ├── test_server.py
-│   ├── demo_all_endpoints.py     ← Demo scripts (moved here)
-│   └── demo_new_endpoints.py     ← Demo scripts (moved here)
-├── scripts/                      ← Utility scripts
+│   └── test_server.py
 ├── Makefile
 ├── Dockerfile
 ├── docker-compose.yml

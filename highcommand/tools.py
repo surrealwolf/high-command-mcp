@@ -8,18 +8,9 @@ from highcommand.api_client import HelldiverAPIClient
 class HelldiverTools:
     """Tools for interacting with HellHub Collective API."""
 
-    def __init__(
-        self,
-        client_id: str = "high-command",
-        contact_email: str = "lee@fullmetal.dev",
-    ):
-        """Initialize the tools.
-
-        Args:
-            client_id: Identifier for this client
-            contact_email: Contact email for API usage
-        """
-        self.client = HelldiverAPIClient(client_id=client_id, contact_email=contact_email)
+    def __init__(self):
+        """Initialize the tools."""
+        self.client = HelldiverAPIClient()
 
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.

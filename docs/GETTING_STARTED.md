@@ -133,7 +133,6 @@ LOG_LEVEL=INFO  # Logging level
 high-command/
 ├── highcommand/      # Main server code
 ├── tests/            # Test suite
-├── scripts/          # Utility scripts
 ├── docs/             # Documentation
 ├── .github/          # GitHub config (copilot-instructions.md, workflows/)
 ├── Makefile          # Development tasks

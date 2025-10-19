@@ -59,7 +59,7 @@ lint:
 	$(MYPY) highcommand --ignore-missing-imports
 
 format:
-	$(BLACK) highcommand tests scripts
+	$(BLACK) highcommand tests
 	$(RUFF) check --fix .
 
 clean:
@@ -72,11 +72,7 @@ docker-build:
 	docker build -t high-command:latest .
 
 docker-run: docker-build
-	docker run -it --rm \
-		-e HD_API_KEY=${HD_API_KEY} \
-		-e X_SUPER_CLIENT=hc.dataknife.ai \
-		-e X_SUPER_CONTACT=lee@fullmetal.dev \
-		high-command:latest
+	docker run -it --rm high-command:latest
 
 docs:
 	cd docs && make html

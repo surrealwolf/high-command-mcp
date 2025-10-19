@@ -13,30 +13,19 @@ class HelldiverAPIClient:
 
     BASE_URL = "https://api-hellhub-collective.koyeb.app/api"
 
-    def __init__(
-        self,
-        client_id: str = "high-command",
-        contact_email: str = "lee@fullmetal.dev",
-        timeout: float = 30.0,
-    ):
+    def __init__(self, timeout: float = 30.0):
         """Initialize the API client.
 
         Args:
-            client_id: Identifier for this client (for logging/tracking)
-            contact_email: Contact email for API usage
             timeout: Request timeout in seconds
         """
-        self.client_id = client_id
-        self.contact_email = contact_email
         self.timeout = timeout
         self._client: Optional[httpx.AsyncClient] = None
 
     @property
     def headers(self) -> dict[str, str]:
         """Get request headers for API requests."""
-        return {
-            "User-Agent": f"{self.client_id} ({self.contact_email})",
-        }
+        return {}
 
     async def __aenter__(self):
         """Async context manager entry."""
