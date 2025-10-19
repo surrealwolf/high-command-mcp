@@ -73,7 +73,44 @@ make lint
 make check
 ```
 
-## 💻 VS Code Integration
+## � Docker & Kubernetes Support
+
+### Docker
+
+```bash
+# Build image
+make docker-build
+
+# Run container
+make docker-run
+
+# Or manually
+docker build -t high-command:latest .
+docker run -p 8000:8000 high-command:latest
+```
+
+### Kubernetes
+
+High-Command supports HTTP/SSE transport for Kubernetes deployments:
+
+```bash
+# Install with Kubernetes support
+pip install high-command[kubernetes]
+
+# Deploy to cluster
+kubectl apply -f k8s/rbac.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+
+# Check status
+kubectl get pods -l app=high-command
+kubectl port-forward svc/high-command 8000:80
+```
+
+See [KUBERNETES_DEPLOYMENT.md](docs/KUBERNETES_DEPLOYMENT.md) for complete guide.
+
+## �💻 VS Code Integration
 
 The High-Command MCP server integrates seamlessly with VS Code and GitHub Copilot.
 
@@ -90,7 +127,7 @@ The High-Command MCP server integrates seamlessly with VS Code and GitHub Copilo
      "servers": {
        "high-command": {
          "type": "stdio",
-         "command": "python",
+         "command": "/full/path/to/python",
          "args": ["-m", "highcommand.server"],
          "cwd": "/path/to/high-command-mcp"
        }
@@ -262,4 +299,12 @@ For issues and questions:
 
 ---
 
+## Development
+
+This project was built using **GitHub Copilot with Claude Haiku 4.5**, demonstrating the capabilities of AI-assisted software development for creating production-ready MCP servers.
+
+---
+
 Made with ❤️ for the Helldivers 2 community
+
+````

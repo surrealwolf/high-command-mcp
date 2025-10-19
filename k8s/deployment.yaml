@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: high-command
+  namespace: default
+  labels:
+    app: high-command
+    version: v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: high-command
+  template:
+    metadata:
+      labels:
+        app: high-command
+    spec:
+      serviceAccountName: high-command
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: high-command
+        image: your-registry/high-command:latest
+        imagePullPolicy: IfNotPresent
+        
+        # HTTP Transport Configuration for Kubernetes
+        env:
+        - name: MCP_TRANSPORT
+          value: "http"
+        - name: MCP_HOST
+          value: "0.0.0.0"
+        - name: MCP_PORT
+          value: "8000"
+        - name: MCP_WORKERS
+          value: "4"
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: high-command-config
+              key: LOG_LEVEL
+        - name: X_SUPER_CLIENT
+          value: "hc.k8s.cluster"
+        - name: X_SUPER_CONTACT
+          value: "ops@example.com"
+        
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+        
+        # Health Checks for Kubernetes
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 2
+        
+        # Resource Management
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        
+        # Security Context
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        
+        # Volume Mounts
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/cache
+      
+      # Volumes
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      
+      # Pod Disruption Budget
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - high-command
+              topologyKey: kubernetes.io/hostname

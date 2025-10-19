@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: high-command-netpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: high-command
+  policyTypes:
+  - Ingress
+  - Egress
+  
+  # Ingress: Allow traffic from within namespace
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: default
+    ports:
+    - protocol: TCP
+      port: 8000
+  
+  # Egress: Allow DNS and HTTPS for API calls
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53  # DNS
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443  # HTTPS for HellHub API
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 80  # HTTP for HellHub API

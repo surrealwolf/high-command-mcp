@@ -4,10 +4,12 @@ import asyncio
 import json
 import logging
 import os
+import sys
 
 from mcp.server import Server
 from mcp.server.models import InitializationOptions
 from mcp.server.stdio import stdio_server
+from mcp.server.sse import SseServerTransport
 from mcp.types import (
     ServerCapabilities,
     TextContent,
@@ -154,5 +156,129 @@ async def main():
         await server.run(read_stream, write_stream, init_options)
 
 
+async def http_server():
+    """Run the MCP server with HTTP/SSE transport (Kubernetes-ready)."""
+    try:
+        import uvicorn
+        from fastapi import FastAPI, Request
+        from fastapi.responses import StreamingResponse
+    except ImportError:
+        logger.error(
+            "HTTP support requires 'uvicorn' and 'fastapi'. "
+            "Install with: pip install high-command[http]"
+        )
+        sys.exit(1)
+
+    app = FastAPI(title="High-Command MCP Server")
+
+    # Store active connections
+    connections = {}
+
+    @app.get("/health")
+    async def health_check():
+        """Health check endpoint."""
+        return {"status": "healthy", "service": "high-command-mcp"}
+
+    @app.get("/sse")
+    async def sse_endpoint(request: Request):
+        """SSE endpoint for MCP communication."""
+
+        async def event_generator():
+            """Generate MCP events over SSE."""
+            transport = SseServerTransport(request.scope["client"][0])
+            try:
+                logger.info(f"New SSE connection from {request.scope['client'][0]}")
+                init_options = InitializationOptions(
+                    server_name="high-command",
+                    server_version="0.1.0",
+                    capabilities=ServerCapabilities(tools={}),
+                )
+                await server.run(transport.read_stream, transport.write_stream, init_options)
+            except Exception as e:
+                logger.error(f"SSE connection error: {e}")
+                yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
+            finally:
+                logger.info(f"SSE connection closed from {request.scope['client'][0]}")
+
+        return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+    @app.post("/messages")
+    async def handle_message(request: Request):
+        """Handle JSON-RPC messages over HTTP."""
+        try:
+            data = await request.json()
+            logger.debug(f"Received message: {data}")
+
+            # Simulate MCP message handling
+            if data.get("jsonrpc") == "2.0":
+                method = data.get("method", "")
+                params = data.get("params", {})
+
+                if method == "tools/list":
+                    # Return list of tools
+                    result = await list_tools()
+                    return {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "result": {"tools": [t.model_dump() for t in result]},
+                    }
+                elif method == "tools/call":
+                    # Call a tool
+                    tool_name = params.get("name")
+                    arguments = params.get("arguments", {})
+                    result = await call_tool(tool_name, arguments)
+                    return {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "result": {"content": [r.model_dump() for r in result]},
+                    }
+                else:
+                    return {
+                        "jsonrpc": "2.0",
+                        "id": data.get("id"),
+                        "error": {"code": -32601, "message": f"Method not found: {method}"},
+                    }
+            else:
+                return {
+                    "jsonrpc": "2.0",
+                    "id": data.get("id"),
+                    "error": {"code": -32600, "message": "Invalid Request"},
+                }
+
+        except Exception as e:
+            logger.error(f"Error handling message: {e}")
+            return {
+                "jsonrpc": "2.0",
+                "error": {"code": -32603, "message": f"Internal error: {str(e)}"},
+            }
+
+    # Get configuration from environment
+    host = os.getenv("MCP_HOST", "0.0.0.0")
+    port = int(os.getenv("MCP_PORT", "8000"))
+    workers = int(os.getenv("MCP_WORKERS", "4"))
+
+    logger.info(f"Starting HTTP MCP Server on {host}:{port}")
+
+    # Run with uvicorn
+    config = uvicorn.Config(
+        app,
+        host=host,
+        port=port,
+        workers=workers,
+        log_level=os.getenv("LOG_LEVEL", "info").lower(),
+    )
+    server_instance = uvicorn.Server(config)
+    await server_instance.serve()
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Determine transport mode
+    transport = os.getenv("MCP_TRANSPORT", "stdio").lower()
+
+    if transport == "http":
+        asyncio.run(http_server())
+    elif transport == "sse":
+        asyncio.run(http_server())
+    else:
+        # Default to stdio
+        asyncio.run(main())

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: high-command
+  namespace: default
+  labels:
+    app: high-command
+spec:
+  type: ClusterIP
+  selector:
+    app: high-command
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  sessionAffinity: None
+  # Enable session affinity if needed
+  # sessionAffinity: ClientIP
+  # sessionAffinityConfig:
+  #   clientIP:
+  #     timeoutSeconds: 3600
