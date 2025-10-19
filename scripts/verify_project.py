@@ -22,14 +22,17 @@ async def verify_imports():
 
     try:
         from mcp.server import Server  # noqa: F401
+
         print("✓ MCP SDK imported successfully")
         from highcommand import (  # noqa: F401
             CampaignInfo,
             HelldiverAPIClient,
             WarInfo,
         )
+
         print("✓ HellCommand package imported successfully")
         from highcommand.tools import HelldiverTools  # noqa: F401
+
         print("✓ HellCommand tools imported successfully")
         return True
     except ImportError as e:
@@ -65,7 +68,7 @@ async def verify_api_connectivity():
             r = await client.get(f"{base_url}/planets", timeout=10)
             if r.status_code == 200:
                 data = r.json()
-                total = data.get('pagination', {}).get('total', 'N/A')
+                total = data.get("pagination", {}).get("total", "N/A")
                 print(f"✓ /planets endpoint: 200 OK ({total} planets)")
                 results.append(True)
             else:
@@ -143,9 +146,9 @@ def verify_project_structure():
 
 async def main():
     """Run all verifications."""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("  HIGH-COMMAND MCP SERVER - PROJECT VERIFICATION")
-    print("="*70)
+    print("=" * 70)
 
     results = {
         "Imports": await verify_imports(),

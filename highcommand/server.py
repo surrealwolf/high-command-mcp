@@ -8,8 +8,8 @@ import sys
 
 from mcp.server import Server
 from mcp.server.models import InitializationOptions
-from mcp.server.stdio import stdio_server
 from mcp.server.sse import SseServerTransport
+from mcp.server.stdio import stdio_server
 from mcp.types import (
     ServerCapabilities,
     TextContent,
@@ -171,9 +171,6 @@ async def http_server():
 
     app = FastAPI(title="High-Command MCP Server")
 
-    # Store active connections
-    connections = {}
-
     @app.get("/health")
     async def health_check():
         """Health check endpoint."""
@@ -249,7 +246,7 @@ async def http_server():
             logger.error(f"Error handling message: {e}")
             return {
                 "jsonrpc": "2.0",
-                "error": {"code": -32603, "message": f"Internal error: {str(e)}"},
+                "error": {"code": -32603, "message": f"Internal error: {e!s}"},
             }
 
     # Get configuration from environment
