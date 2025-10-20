@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "high-command"
 version = "0.1.0"
-description = "MCP Server for Helldivers 2 API integration"
+description = "Python MCP Server for High-Command API integration - Real-time Helldivers 2 game data access"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
