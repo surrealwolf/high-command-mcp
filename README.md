@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server for seamless integration with the High-Com
 - 🎮 **High-Command API**: Direct access to game data (war status, campaigns, planets, biomes, factions, statistics)
 - 📦 **Async/Await**: Built with modern async Python and httpx
 - 🐳 **Docker Support**: Easy containerization with multi-stage builds
-- 🧪 **Comprehensive Tests**: Full test coverage with 100% API client coverage
+- 🧪 **Comprehensive Tests**: 12 tests, 46% coverage
 - 📚 **Documentation**: Complete API and usage documentation
 - 🔄 **CI/CD**: GitHub Actions workflows for testing and Docker builds
 - ⚙️ **Configurable**: Environment-based configuration for API endpoints and logging
