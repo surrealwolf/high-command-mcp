@@ -1,6 +1,7 @@
 """Tests for MCP server."""
 
 import json
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -59,3 +60,70 @@ async def test_call_tool_missing_required_parameter():
     assert len(result) == 1
     content = json.loads(result[0].text)
     assert content["status"] == "error"
+
+
+@pytest.mark.asyncio
+async def test_call_tool_campaign_info_success():
+    """Test successful campaign info tool call."""
+    mock_campaign_data = {
+        "id": 1,
+        "name": "Test Campaign",
+        "description": "Test Description",
+    }
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_campaign_info.return_value = mock_campaign_data
+
+        result = await call_tool("get_campaign_info", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_campaign_data
+        assert content["error"] is None
+
+
+@pytest.mark.asyncio
+async def test_call_tool_campaign_info_error():
+    """Test campaign info tool with error."""
+    error_message = "API connection failed"
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_campaign_info.side_effect = Exception(error_message)
+
+        result = await call_tool("get_campaign_info", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "error"
+        assert content["data"] is None
+        assert error_message in content["error"]
+
+
+@pytest.mark.asyncio
+async def test_call_tool_response_shape():
+    """Test that all tool responses have consistent shape."""
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_war_status.return_value = {"status": "active"}
+
+        result = await call_tool("get_war_status", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        # All responses should have these fields
+        assert "status" in content
+        assert "data" in content
+        assert "error" in content
+        assert content["status"] in ["success", "error"]
