@@ -97,6 +97,8 @@ extend-exclude = '''
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "RUF"]
 ignore = ["E501", "N815"]  # N815: Allow camelCase for API field names matching HellHub API
 

@@ -1,7 +1,8 @@
 """Tests for the API client."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from highcommand.api_client import HighCommandAPIClient
 
