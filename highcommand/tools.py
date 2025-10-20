@@ -8,10 +8,6 @@ from highcommand.api_client import HighCommandAPIClient
 class HighCommandTools:
     """Tools for interacting with High-Command API."""
 
-    def __init__(self):
-        """Initialize the tools."""
-        pass
-
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
 
