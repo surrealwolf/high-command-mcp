@@ -8,7 +8,7 @@ A Model Context Protocol (MCP) server for seamless integration with the High-Com
 - 🎮 **High-Command API**: Direct access to game data (war status, campaigns, planets, biomes, factions, statistics)
 - 📦 **Async/Await**: Built with modern async Python and httpx
 - 🐳 **Docker Support**: Easy containerization with multi-stage builds
-- 🧪 **Comprehensive Tests**: 17 tests, 50% coverage
+- 🧪 **Comprehensive Tests**: 17 tests, 54% coverage
 - 📚 **Documentation**: Complete API and usage documentation
 - 🔄 **CI/CD**: GitHub Actions workflows for testing and Docker builds
 - ⚙️ **Configurable**: Environment-based configuration for API endpoints and logging
@@ -17,7 +17,7 @@ A Model Context Protocol (MCP) server for seamless integration with the High-Com
 
 ### Prerequisites
 
-- Python 3.14.0+
+- Python 3.9+
 - pip or uv
 - Docker (optional)
 
@@ -25,8 +25,8 @@ A Model Context Protocol (MCP) server for seamless integration with the High-Com
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/high-command.git
-cd high-command
+git clone https://github.com/surrealwolf/high-command-mcp.git
+cd high-command-mcp
 
 # Install dependencies
 make install
@@ -153,7 +153,7 @@ The High-Command MCP server integrates seamlessly with VS Code and GitHub Copilo
 The MCP server exposes the following tools:
 
 ### `get_war_status`
-Get current war status from HellHub Collective API.
+Get current war status from High-Command API.
 
 **Parameters**: None
 
@@ -191,16 +191,17 @@ Get status for a specific planet.
 ## Project Structure
 
 ```
-high-command/
-├── mcp/                    # Main MCP server package
+high-command-mcp/
+├── highcommand/            # Main MCP server package
 │   ├── __init__.py
 │   ├── server.py           # MCP server implementation
-│   ├── api_client.py       # Helldivers 2 API client
+│   ├── api_client.py       # High-Command API client
 │   ├── models.py           # Pydantic data models
 │   └── tools.py            # MCP tool definitions
 ├── tests/                  # Test suite
 │   ├── test_api_client.py
-│   └── test_models.py
+│   ├── test_models.py
+│   └── test_server.py
 ├── docs/                   # Documentation
 ├── Makefile                # Build and development tasks
 ├── Dockerfile              # Docker container definition
@@ -299,8 +300,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Support
 
 For issues and questions:
-- 📝 [GitHub Issues](https://github.com/yourusername/high-command/issues)
-- 💬 [GitHub Discussions](https://github.com/yourusername/high-command/discussions)
+- 📝 [GitHub Issues](https://github.com/surrealwolf/high-command-mcp/issues)
+- 💬 [GitHub Discussions](https://github.com/surrealwolf/high-command-mcp/discussions)
 
 ---
 

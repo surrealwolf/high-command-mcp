@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- Python 3.14.0 or higher (recommended)
+- Python 3.9 or higher (3.12.3+ recommended)
 - pip (Python package manager)
 - Git
-- Docker (optional)
+- Docker (optional, for containerized deployment)
 
 ## Installation
 
@@ -13,8 +13,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/high-command.git
-   cd high-command
+   git clone https://github.com/surrealwolf/high-command-mcp.git
+   cd high-command-mcp
    ```
 
 2. **Create a virtual environment** (recommended)
@@ -76,7 +76,9 @@ pip install -r requirements-kubernetes.txt
    ```
 
 3. **Optional environment variables:**
+   - `HIGH_COMMAND_API_BASE_URL`: Base URL for High-Command API (default: `http://localhost:5000`)
    - `LOG_LEVEL`: Logging level (default: INFO)
+   - `MCP_TRANSPORT`: Transport mode - `stdio` or `http` (default: `stdio`)
 
 ## Verification
 
@@ -107,18 +109,19 @@ pip install -e .
 
 ### Issue: "Bot detection HTML response"
 
-**Solution**: Ensure environment variables are set correctly:
+**Solution**: This issue is specific to certain upstream APIs with Cloudflare protection. The High-Command API does not require special headers. Ensure environment variables are configured correctly:
 ```bash
-export X_SUPER_CLIENT=hc.dataknife.ai
-export X_SUPER_CONTACT=lee@fullmetal.dev
+export HIGH_COMMAND_API_BASE_URL=http://localhost:5000
+export LOG_LEVEL=INFO
 ```
 
 ### Issue: "Connection timeout"
 
-**Solution**: The API might be temporarily unavailable or you might have a network issue. Try:
+**Solution**: The API might be temporarily unavailable or you might have a network issue. The High-Command API implements automatic exponential backoff for retries. If you still experience timeouts:
 1. Check your internet connection
-2. Verify the API endpoint is accessible: `curl https://api.helldivers2.io/api/v1/war/status`
-3. Increase the timeout in code: `HelldiverAPIClient(timeout=60.0)`
+2. Verify the API endpoint is accessible: `curl http://localhost:5000/api/war/status`
+3. Check if the High-Command API service is running
+4. Review logs for rate limiting warnings
 
 ### Issue: "pytest: command not found"
 
@@ -151,7 +154,7 @@ make dev
 
 5. **Run full check** (lint + format + test)
    ```bash
-   make check
+   make check-all
    ```
 
 ## Project Layout
@@ -171,17 +174,16 @@ high-command/
 
 ## Next Steps
 
-- Read [README.md](README.md) for project overview
-- Check [docs/API.md](docs/API.md) for API documentation
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-- Review [.copilot-instructions.md](.copilot-instructions.md) for development notes
+- Read [README.md](../README.md) for project overview
+- Check [docs/API.md](API.md) for API documentation
+- See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
+- Review [.github/copilot-instructions.md](../.github/copilot-instructions.md) for development patterns
 
 ## Getting Help
 
-- Check [README.md](README.md) for common questions
-- Review GitHub Issues
-- Start a GitHub Discussion
-- Contact: lee@fullmetal.dev
+- Check [README.md](../README.md) for common questions
+- Review GitHub Issues at https://github.com/surrealwolf/high-command-mcp/issues
+- Start a GitHub Discussion at https://github.com/surrealwolf/high-command-mcp/discussions
 
 ## Additional Resources
 
@@ -190,8 +192,8 @@ high-command/
 - [Pydantic Validation](https://docs.pydantic.dev/)
 - [pytest Testing](https://docs.pytest.org/)
 - [MCP Protocol](https://modelcontextprotocol.io/)
-- [Helldivers 2 API](https://github.com/helldivers-2/api)
+- [High-Command API](https://github.com/surrealwolf/high-command-mcp)
 
 ---
 
-**Last Updated**: October 18, 2025
+**Last Updated**: October 21, 2025

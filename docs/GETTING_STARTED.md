@@ -40,7 +40,7 @@ Your High-Command MCP Server project has been successfully set up. Here's what's
 
 ### 1. Install Dependencies
 ```bash
-cd /home/lee/git/high-command
+cd high-command-mcp
 make dev
 ```
 
@@ -52,7 +52,7 @@ cp .env.example .env
 
 ### 3. Verify Setup
 ```bash
-python venv/bin/python3 verify_project.py
+make test
 ```
 
 ### 4. Run Tests
@@ -124,13 +124,18 @@ make run
 ## 🔧 Environment Variables
 
 ```bash
-LOG_LEVEL=INFO  # Logging level
+# API Configuration
+HIGH_COMMAND_API_BASE_URL=http://localhost:5000  # High-Command API base URL
+
+# Server Configuration
+MCP_TRANSPORT=stdio  # Transport mode: stdio or http
+LOG_LEVEL=INFO       # Logging level
 ```
 
 ## 📝 Project Structure
 
 ```
-high-command/
+high-command-mcp/
 ├── highcommand/      # Main server code
 ├── tests/            # Test suite
 ├── docs/             # Documentation
@@ -138,7 +143,7 @@ high-command/
 ├── Makefile          # Development tasks
 ├── Dockerfile        # Container image
 ├── pyproject.toml    # Python config
-└── README.md         # This project
+└── README.md         # Project overview
 ```
 
 ## ✨ Features Available
@@ -154,7 +159,7 @@ high-command/
 
 ✅ **Full Type Hints** - All functions typed
 
-✅ **Comprehensive Tests** - 12/12 passing
+✅ **Comprehensive Tests** - 17/17 passing
 
 ✅ **CI/CD Ready** - GitHub Actions configured
 
@@ -194,8 +199,7 @@ docker images | grep high-command
 - [ ] Cloned/opened repository
 - [ ] Installed dependencies with `make dev`
 - [ ] Copied `.env.example` to `.env`
-- [ ] Ran `venv/bin/python3 verify_project.py`
-- [ ] Ran `make test` (all tests pass)
+- [ ] Ran `make test` (all 17 tests pass)
 - [ ] Ran `make lint` (no errors)
 - [ ] Can start server: `python -m highcommand.server`
 - [ ] Read README.md
@@ -213,5 +217,5 @@ Your MCP Server is ready for development. Start by:
 ---
 
 **Version**: 1.0.0
-**Python**: 3.13.7
+**Python**: 3.9+ (tested on 3.12.3)
 **Status**: ✅ Production Ready

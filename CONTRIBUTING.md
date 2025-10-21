@@ -35,6 +35,34 @@ Be respectful and professional in all interactions.
    make test
    ```
 
+### Rate Limiting Best Practices
+
+The High-Command API implements **automatic exponential backoff** for rate limiting. When developing:
+
+1. **Don't implement retry logic** - The upstream API handles it automatically
+2. **Cache responses** - Store data locally to reduce API calls
+3. **Avoid unnecessary requests** - Only fetch data when needed
+4. **Monitor logs** - Watch for repeated 429 warnings
+5. **Check response status** - Handle errors gracefully even after automatic retries
+
+Example:
+```python
+# ✅ CORRECT: Let the upstream API handle rate limiting
+async with HighCommandAPIClient() as client:
+    data = await client.get_war_status()
+    # Rate limiting handled automatically
+
+# ❌ WRONG: Don't add your own retry wrapper
+for attempt in range(3):
+    try:
+        async with HighCommandAPIClient() as client:
+            return await client.get_war_status()
+    except Exception:
+        await asyncio.sleep(2 ** attempt)  # Redundant!
+```
+
+See [docs/API.md#rate-limiting](docs/API.md#rate-limiting) for detailed information.
+
 ### Code Style
 
 - Follow PEP 8

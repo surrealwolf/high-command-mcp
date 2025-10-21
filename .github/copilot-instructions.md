@@ -34,7 +34,10 @@ The codebase follows a clean separation of concerns across three critical layers
 
 ### External API Integration
 - **Base URL**: Configured via `HIGH_COMMAND_API_BASE_URL` environment variable (default: `http://localhost:5000`)
-- **Rate Limit**: Respect rate limiting in production (check API docs)
+- **Rate Limiting**: The High-Command API implements **automatic exponential backoff** for rate limit responses (HTTP 429)
+  - Backoff strategy: 5s → 10s → 20s → 40s → 80s (5 retry attempts)
+  - Transparent to MCP tools - no special handling needed
+  - See [Rate Limiting Strategy](#rate-limiting-strategy) section below
 - **Authentication**: None required (High-Command API is open)
 - **Response Format**: All endpoints return structured JSON with data and pagination
 - **7 Endpoints Implemented**: `/api/war/status`, `/api/planets`, `/api/planets/{id}`, `/api/statistics`, `/api/biomes`, `/api/factions`, `/api/campaigns/active`
@@ -281,14 +284,68 @@ make format  # Auto-fix style issues
 pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 ```
 
+## Rate Limiting Strategy
+
+The High-Command API (upstream dependency) handles rate limiting transparently with **automatic exponential backoff**:
+
+### How It Works
+- **Automatic Retries**: The High-Command API automatically retries failed requests with 429 (Too Many Requests) responses
+- **Exponential Delays**: 5s → 10s → 20s → 40s → 80s progression
+- **Max Attempts**: Up to 5 retries before returning an error
+- **Calculation**: Each retry waits `2^attempt * 5` seconds
+- **Total Wait Time**: Maximum ~155 seconds (5+10+20+40+80)
+
+### Implementation Details
+- **Location**: Handled by the upstream High-Command API, not this MCP server
+- **Transparency**: MCP tools automatically benefit - no special code needed
+- **Error Handling**: After max retries exhausted, tools return error response with standard shape
+- **Logging**: Rate limit encounters are logged as warnings for monitoring
+
+### Best Practices for Developers
+1. **Don't implement retry logic in MCP tools** - it's handled upstream
+2. **Cache responses** when possible to minimize API calls
+3. **Monitor logs** for repeated 429 warnings (indicates persistent rate limiting)
+4. **Respect API limits** - avoid unnecessary requests in tool implementations
+5. **Check response status** - even with retries, requests can still fail after exhaustion
+
+### Code Example
+```python
+# ✅ CORRECT: No special rate limit handling needed
+async def get_war_status_tool(self) -> dict[str, Any]:
+    try:
+        async with HighCommandAPIClient() as client:
+            # Rate limiting handled automatically by upstream API
+            data = await client.get_war_status()
+            return {"status": "success", "data": data, "error": None}
+    except Exception as e:
+        # Only see error if all retries exhausted
+        return {"status": "error", "data": None, "error": str(e)}
+
+# ❌ WRONG: Don't add your own retry logic
+async def get_war_status_tool(self) -> dict[str, Any]:
+    for attempt in range(3):  # Don't do this!
+        try:
+            async with HighCommandAPIClient() as client:
+                return await client.get_war_status()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 429:
+                await asyncio.sleep(2 ** attempt)  # Redundant!
+```
+
+### For API Documentation
+When documenting tools, mention that rate limiting is handled automatically:
+- ✅ "This tool automatically handles rate limiting via exponential backoff"
+- ✅ "Rate limit retries are transparent - no action required"
+- ❌ Don't say: "Implement retry logic for 429 responses"
+
 ## Important Notes
 
 1. **No Authentication**: High-Command API is public - no API keys, tokens, or auth headers
-2. **Rate Limiting**: Respect rate limiting in production (check API docs)
+2. **Rate Limiting**: Automatic exponential backoff handled by upstream API - see [Rate Limiting Strategy](#rate-limiting-strategy)
 3. **All Async**: Every I/O operation uses async/await - no sync calls
 4. **Pydantic v2**: Older v1 syntax won't work - use `ConfigDict`, `Field`, not `Config` class
 5. **Package Name**: `highcommand`, NOT `mcp` (avoids shadowing the mcp SDK import)
-6. **Test Coverage**: Currently 100% on implemented code - maintain for new features
+6. **Test Coverage**: Currently 54% overall, 100% on models - maintain or improve for new features
 7. **Type Checking**: `mypy` configured in pyproject.toml - all functions need type hints
 8. **Format on Save**: Black line-length is 100 chars - configure your editor
 
@@ -306,7 +363,7 @@ pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 
 ---
 
-**Last Updated**: October 20, 2025  
+**Last Updated**: October 21, 2025  
 **Version**: 1.0.0  
-**Python**: 3.9+ (tested on 3.14.0)  
+**Python**: 3.9+ (tested on 3.12.3, 3.14.0)  
 **Status**: Production Ready 🟢
