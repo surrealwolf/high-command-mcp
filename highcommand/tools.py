@@ -36,6 +36,7 @@ class HighCommandTools:
         Returns:
             JSON formatted war status
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_war_status()
@@ -48,6 +49,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planets()
@@ -60,6 +62,7 @@ class HighCommandTools:
         Returns:
             JSON formatted statistics data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_statistics()
@@ -72,6 +75,7 @@ class HighCommandTools:
         Returns:
             JSON formatted campaign data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_campaign_info()
@@ -87,6 +91,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet status data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planet_status(planet_index)
@@ -99,6 +104,7 @@ class HighCommandTools:
         Returns:
             JSON formatted biome data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_biomes()
@@ -111,6 +117,7 @@ class HighCommandTools:
         Returns:
             JSON formatted faction data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_factions()
