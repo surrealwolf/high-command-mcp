@@ -1,4 +1,4 @@
-"""HellHub Collective API client for Helldivers 2 data."""
+"""High-Command API client for Helldivers 2 data."""
 
 import os
 from typing import Any, Optional
@@ -9,10 +9,13 @@ import structlog
 logger = structlog.get_logger(__name__)
 
 
-class HelldiverAPIClient:
-    """Client for interacting with the HellHub Collective API."""
+class HighCommandAPIClient:
+    """Client for interacting with the High-Command API."""
 
-    BASE_URL = os.getenv("HELLHUB_API_BASE_URL", "NA")
+    # WARNING: The default BASE_URL uses 'http://', which transmits data unencrypted.
+    # This is acceptable for local development only. For production deployments,
+    # always set HIGH_COMMAND_API_BASE_URL to an HTTPS endpoint to ensure secure communication.
+    BASE_URL = os.getenv("HIGH_COMMAND_API_BASE_URL", "http://localhost:5000")
 
     def __init__(self, timeout: float = 30.0):
         """Initialize the API client.
@@ -46,14 +49,14 @@ class HelldiverAPIClient:
         """Get current war status.
 
         Returns:
-            War status information from HellHub API
+            War status information from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
         logger.info("Fetching war status")
         try:
-            response = await self._client.get("/war")
+            response = await self._client.get("/api/war/status")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -64,14 +67,14 @@ class HelldiverAPIClient:
         """Get planet information.
 
         Returns:
-            Planet information from HellHub API
+            Planet information from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
         logger.info("Fetching planets")
         try:
-            response = await self._client.get("/planets")
+            response = await self._client.get("/api/planets")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -82,14 +85,14 @@ class HelldiverAPIClient:
         """Get global game statistics.
 
         Returns:
-            Global statistics from HellHub API
+            Global statistics from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
         logger.info("Fetching statistics")
         try:
-            response = await self._client.get("/statistics")
+            response = await self._client.get("/api/statistics")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -110,7 +113,7 @@ class HelldiverAPIClient:
 
         logger.info("Fetching planet status", planet_index=planet_index)
         try:
-            response = await self._client.get(f"/planets/{planet_index}")
+            response = await self._client.get(f"/api/planets/{planet_index}")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -120,29 +123,33 @@ class HelldiverAPIClient:
     async def get_campaign_info(self) -> dict[str, Any]:
         """Get campaign information.
 
-        Note: This endpoint is not available in the current HellHub API.
-
         Returns:
-            Error response indicating endpoint unavailability
+            Active campaign information from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
-        logger.info("Campaign info not available in HellHub API")
-        raise RuntimeError("Campaigns endpoint is not available in the HellHub Collective API")
+        logger.info("Fetching campaign information")
+        try:
+            response = await self._client.get("/api/campaigns/active")
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPError as e:
+            logger.error("Failed to fetch campaign info", error=str(e))
+            raise
 
     async def get_biomes(self) -> dict[str, Any]:
         """Get biome information.
 
         Returns:
-            Biome data from HellHub API
+            Biome data from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
         logger.info("Fetching biomes")
         try:
-            response = await self._client.get("/biomes")
+            response = await self._client.get("/api/biomes")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:
@@ -153,14 +160,14 @@ class HelldiverAPIClient:
         """Get faction information.
 
         Returns:
-            Faction data from HellHub API
+            Faction data from High-Command API
         """
         if not self._client:
             raise RuntimeError("Client not initialized. Use as async context manager.")
 
         logger.info("Fetching factions")
         try:
-            response = await self._client.get("/factions")
+            response = await self._client.get("/api/factions")
             response.raise_for_status()
             return response.json()
         except httpx.HTTPError as e:

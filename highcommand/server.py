@@ -16,7 +16,7 @@ from mcp.types import (
     Tool,
 )
 
-from highcommand.tools import HelldiverTools
+from highcommand.tools import HighCommandTools
 
 # Configure logging
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize server and tools
 server = Server("high-command")
-tools = HelldiverTools()
+tools = HighCommandTools()
 
 
 @server.list_tools()
@@ -33,7 +33,7 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="get_war_status",
-            description="Get current war status from HellHub Collective API",
+            description="Get current war status from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -42,7 +42,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_planets",
-            description="Get planet information from HellHub Collective API",
+            description="Get planet information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -51,7 +51,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_statistics",
-            description="Get global game statistics from HellHub Collective API",
+            description="Get global game statistics from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -60,7 +60,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_campaign_info",
-            description="Get campaign information from HellHub Collective API",
+            description="Get campaign information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -83,7 +83,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_biomes",
-            description="Get biome information from HellHub Collective API",
+            description="Get biome information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -92,7 +92,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_factions",
-            description="Get faction information from HellHub Collective API",
+            description="Get faction information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -135,7 +135,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [
             TextContent(
                 type="text",
-                text=json.dumps({"status": "error", "error": str(e)}),
+                text=json.dumps({"status": "error", "data": None, "error": str(e)}),
             )
         ]
 

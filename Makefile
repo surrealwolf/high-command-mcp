@@ -19,7 +19,8 @@ help:
 	@echo "  venv           Create virtual environment"
 	@echo "  install        Install dependencies"
 	@echo "  dev            Install development dependencies"
-	@echo "  run            Run the MCP server"
+	@echo "  run            Run the MCP server (HTTP mode)"
+	@echo "  run-stdio      Run the MCP server (stdio mode)"
 	@echo "  test           Run tests with coverage"
 	@echo "  test-fast      Run tests without coverage"
 	@echo "  lint           Run linters (ruff, mypy)"
@@ -46,6 +47,9 @@ dev: venv
 	$(PIP) install -e ".[dev]"
 
 run:
+	MCP_TRANSPORT=http $(PYTHON) -m highcommand.server
+
+run-stdio:
 	$(PYTHON) -m highcommand.server
 
 test:

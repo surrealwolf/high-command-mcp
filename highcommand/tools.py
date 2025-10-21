@@ -1,16 +1,34 @@
-"""MCP tools for HellHub Collective API."""
+"""MCP tools for High-Command API."""
 
-from typing import Any
+import inspect
+from typing import Any, Callable
 
-from highcommand.api_client import HelldiverAPIClient
+from highcommand.api_client import HighCommandAPIClient
 
 
-class HelldiverTools:
-    """Tools for interacting with HellHub Collective API."""
+class HighCommandTools:
+    """Tools for interacting with High-Command API."""
 
-    def __init__(self):
-        """Initialize the tools."""
-        self.client = HelldiverAPIClient()
+    @staticmethod
+    async def _run_tool(func: Callable[..., Any]) -> dict[str, Any]:
+        """Helper to run a tool function with standardized response shape.
+
+        Args:
+            func: Async callable that returns tool data
+
+        Returns:
+            Standardized response with status, data, and error fields
+
+        Raises:
+            TypeError: If func is not a coroutine function
+        """
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError(f"Expected async function, got {type(func).__name__}")
+        try:
+            data = await func()
+            return {"status": "success", "data": data, "error": None}
+        except Exception as e:
+            return {"status": "error", "data": None, "error": str(e)}
 
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
@@ -18,9 +36,11 @@ class HelldiverTools:
         Returns:
             JSON formatted war status
         """
-        async with self.client:
-            data = await self.client.get_war_status()
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_war_status()
+
+        return await self._run_tool(_fetch)
 
     async def get_planets_tool(self) -> dict[str, Any]:
         """Tool to get planet information.
@@ -28,9 +48,11 @@ class HelldiverTools:
         Returns:
             JSON formatted planet data
         """
-        async with self.client:
-            data = await self.client.get_planets()
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_planets()
+
+        return await self._run_tool(_fetch)
 
     async def get_statistics_tool(self) -> dict[str, Any]:
         """Tool to get global statistics.
@@ -38,23 +60,23 @@ class HelldiverTools:
         Returns:
             JSON formatted statistics data
         """
-        async with self.client:
-            data = await self.client.get_statistics()
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_statistics()
+
+        return await self._run_tool(_fetch)
 
     async def get_campaign_info_tool(self) -> dict[str, Any]:
         """Tool to get campaign information.
 
-        Note: This endpoint is not available in the current HellHub API.
-
         Returns:
-            Error response indicating endpoint unavailability
+            JSON formatted campaign data
         """
-        return {
-            "status": "error",
-            "data": None,
-            "error": "Campaigns endpoint is not available in the HellHub Collective API",
-        }
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_campaign_info()
+
+        return await self._run_tool(_fetch)
 
     async def get_planet_status_tool(self, planet_index: int) -> dict[str, Any]:
         """Tool to get status for a specific planet.
@@ -65,9 +87,11 @@ class HelldiverTools:
         Returns:
             JSON formatted planet status data
         """
-        async with self.client:
-            data = await self.client.get_planet_status(planet_index)
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_planet_status(planet_index)
+
+        return await self._run_tool(_fetch)
 
     async def get_biomes_tool(self) -> dict[str, Any]:
         """Tool to get biome information.
@@ -75,9 +99,11 @@ class HelldiverTools:
         Returns:
             JSON formatted biome data
         """
-        async with self.client:
-            data = await self.client.get_biomes()
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_biomes()
+
+        return await self._run_tool(_fetch)
 
     async def get_factions_tool(self) -> dict[str, Any]:
         """Tool to get faction information.
@@ -85,6 +111,8 @@ class HelldiverTools:
         Returns:
             JSON formatted faction data
         """
-        async with self.client:
-            data = await self.client.get_factions()
-            return {"status": "success", "data": data}
+        async def _fetch() -> Any:
+            async with HighCommandAPIClient() as client:
+                return await client.get_factions()
+
+        return await self._run_tool(_fetch)
