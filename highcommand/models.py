@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Generic, Optional, TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 T = TypeVar("T")
 
@@ -11,32 +11,28 @@ T = TypeVar("T")
 class PaginationInfo(BaseModel):
     """Pagination information for list responses."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     page: int
     pageSize: int = Field(..., alias="pageSize")
     total: int
     pageCount: int = Field(..., alias="pageCount")
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class APIResponse(BaseModel, Generic[T]):
     """Standard API response wrapper from HellHub."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     data: Any  # Can be a single object or list
     error: Optional[str] = None
     pagination: Optional[PaginationInfo] = None
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class WarInfo(BaseModel):
     """War information."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     id: int
     index: int
@@ -46,14 +42,11 @@ class WarInfo(BaseModel):
     createdAt: datetime = Field(..., alias="createdAt")
     updatedAt: datetime = Field(..., alias="updatedAt")
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class PlanetInfo(BaseModel):
     """Planet information."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     index: int
     name: str
@@ -63,14 +56,11 @@ class PlanetInfo(BaseModel):
     hazards: list[dict[str, Any]] = []
     status: Optional[dict[str, Any]] = None
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class Statistics(BaseModel):
     """Global game statistics."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     id: int
     missionsWon: int = Field(..., alias="missionsWon")
@@ -90,14 +80,11 @@ class Statistics(BaseModel):
     createdAt: datetime = Field(..., alias="createdAt")
     updatedAt: datetime = Field(..., alias="updatedAt")
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class CampaignInfo(BaseModel):
     """Campaign information."""
+
+    model_config = ConfigDict(populate_by_name=True)
 
     id: int
     planet: int
@@ -106,20 +93,12 @@ class CampaignInfo(BaseModel):
     createdAt: datetime = Field(..., alias="createdAt")
     updatedAt: datetime = Field(..., alias="updatedAt")
 
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
-
 
 class APIError(BaseModel):
     """API error response."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     error: str
     message: Optional[str] = None
     status_code: int = Field(..., alias="statusCode")
-
-    class Config:
-        """Pydantic config."""
-
-        populate_by_name = True
