@@ -13,7 +13,7 @@ The High-Command MCP Server is **production-ready** with a well-architected thre
 
 1. ✅ **Pydantic v2 Migration** - All models updated from deprecated `class Config` to modern `ConfigDict`
 2. ✅ **Error Response Consistency** - All error responses now include the `data` field for consistent structure
-3. ✅ **Full Test Coverage** - 17/17 tests passing with 51% overall coverage, 100% on core modules
+3. ✅ **Full Test Coverage** - 17/17 tests passing with 51% overall coverage, 100% on core modules (models.py, __init__.py)
 
 ---
 

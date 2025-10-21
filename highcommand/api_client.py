@@ -12,6 +12,9 @@ logger = structlog.get_logger(__name__)
 class HighCommandAPIClient:
     """Client for interacting with the High-Command API."""
 
+    # WARNING: The default BASE_URL uses 'http://', which transmits data unencrypted.
+    # This is acceptable for local development only. For production deployments,
+    # always set HIGH_COMMAND_API_BASE_URL to an HTTPS endpoint to ensure secure communication.
     BASE_URL = os.getenv("HIGH_COMMAND_API_BASE_URL", "http://localhost:5000")
 
     def __init__(self, timeout: float = 30.0):

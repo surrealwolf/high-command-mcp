@@ -1,5 +1,6 @@
 """MCP tools for High-Command API."""
 
+import inspect
 from typing import Any, Callable
 
 from highcommand.api_client import HighCommandAPIClient
@@ -17,7 +18,12 @@ class HighCommandTools:
 
         Returns:
             Standardized response with status, data, and error fields
+
+        Raises:
+            TypeError: If func is not a coroutine function
         """
+        if not inspect.iscoroutinefunction(func):
+            raise TypeError(f"Expected async function, got {type(func).__name__}")
         try:
             data = await func()
             return {"status": "success", "data": data, "error": None}
