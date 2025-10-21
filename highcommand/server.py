@@ -33,7 +33,7 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="get_war_status",
-            description="Get current war status from HellHub Collective API",
+            description="Get current war status from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -42,7 +42,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_planets",
-            description="Get planet information from HellHub Collective API",
+            description="Get planet information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -51,7 +51,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_statistics",
-            description="Get global game statistics from HellHub Collective API",
+            description="Get global game statistics from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -60,7 +60,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_campaign_info",
-            description="Get campaign information from HellHub Collective API",
+            description="Get campaign information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -83,7 +83,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_biomes",
-            description="Get biome information from HellHub Collective API",
+            description="Get biome information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
@@ -92,7 +92,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="get_factions",
-            description="Get faction information from HellHub Collective API",
+            description="Get faction information from High-Command API",
             inputSchema={
                 "type": "object",
                 "properties": {},
