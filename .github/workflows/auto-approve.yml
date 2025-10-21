@@ -14,7 +14,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Approve PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             // workflow_run has pull_requests array directly
