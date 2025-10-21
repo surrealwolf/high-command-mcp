@@ -43,7 +43,7 @@ venv:
 install: venv
 	$(PIP) install -e .
 
-dev: venv
+dev: install
 	$(PIP) install -e ".[dev]"
 
 run:
