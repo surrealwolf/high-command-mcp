@@ -1,31 +1,33 @@
 # API Documentation
 
-## HellHub Collective MCP Server API
+## High-Command MCP Server API
 
-This document describes the tools exposed by the High-Command MCP server, which integrates with the HellHub Collective API.
+This document describes the tools exposed by the High-Command MCP server, which integrates with the High-Command API.
 
 ## Base Information
 
-**API Provider**: [HellHub Collective](https://github.com/hellhub-collective/api)
+**API Provider**: High-Command API
 
-**Base URL**: `https://api-hellhub-collective.koyeb.app/api`
+**Base URL**: `http://localhost:5000` (configurable via `HIGH_COMMAND_API_BASE_URL`)
 
-**Rate Limit**: 200 requests per minute
+**Rate Limit**: Check API documentation
 
-**Update Frequency**: Every minute
+**Update Frequency**: Real-time
 
 ## Authentication
 
-The HellHub Collective API requires no authentication. The server identifies itself using:
+The High-Command API requires no authentication. Simple HTTP requests are used:
 
-- User-Agent header with client name and contact email
+- No User-Agent header required
 - No API keys or special headers required
+- All communication via standard HTTP GET requests
 
 ### Environment Variables
 
-All are optional for HellHub API:
-
+**Optional**:
+- `HIGH_COMMAND_API_BASE_URL`: Base URL for High-Command API (default: `http://localhost:5000`)
 - `LOG_LEVEL`: Logging level (default: `INFO`)
+- `MCP_TRANSPORT`: Transport mode - `stdio` or `http` (default: `stdio`)
 
 ## Tools
 

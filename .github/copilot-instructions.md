@@ -1,6 +1,6 @@
 # High-Command: AI Development Instructions
 
-**High-Command** is a Python MCP (Model Context Protocol) Server integrating the **HellHub Collective API** for Helldivers 2 game data.
+**High-Command** is a Python MCP (Model Context Protocol) Server integrating the **High-Command API** for Helldivers 2 game data.
 
 ## Architecture Essentials
 
@@ -8,35 +8,36 @@
 The codebase follows a clean separation of concerns across three critical layers:
 
 1. **API Client Layer** (`highcommand/api_client.py`)
-   - **Class**: `HelldiverAPIClient` - async HTTP wrapper around HellHub API
+   - **Class**: `HighCommandAPIClient` - async HTTP wrapper around High-Command API
    - **Pattern**: Async context manager (`async with client:`)
-   - **Key Methods**: `get_war_status()`, `get_planets()`, `get_statistics()`, `get_planet_status(index)`, `get_biomes()`, `get_factions()`
-   - **Headers**: Sets User-Agent with client_id and contact_email (no auth required)
+   - **Key Methods**: `get_war_status()`, `get_planets()`, `get_statistics()`, `get_planet_status(index)`, `get_biomes()`, `get_factions()`, `get_campaign_info()`
+   - **Headers**: Minimal headers (no authentication required)
    - **Error Handling**: Raises `RuntimeError` if used outside context manager; catches `httpx.HTTPError` for network issues
 
 2. **Tools Wrapper Layer** (`highcommand/tools.py`)
-   - **Class**: `HelldiverTools` - bridges API client to MCP server
-   - **Pattern**: Instantiates API client, wraps each endpoint as `*_tool()` method
-   - **Response Format**: `{"status": "success"|"error", "data": {...}, "error": "message"}`
-   - **Lifecycle**: Each tool creates a NEW context manager for every call (allows parallel safe calls)
+   - **Class**: `HighCommandTools` - bridges API client to MCP server
+   - **Pattern**: Creates fresh API client per tool call, wraps each endpoint as `*_tool()` method
+   - **Response Format**: `{"status": "success"|"error", "data": {...}, "error": null|"message"}`
+   - **Lifecycle**: Each tool creates a NEW context manager for every call (ensures concurrent-safe isolation)
+   - **Error Handling**: Try/except wrapping ensures consistent response shape
 
 3. **MCP Server Layer** (`highcommand/server.py`)
    - **Framework**: `mcp.server.Server` with async decorators
    - **Registration**: Two critical places - `@server.list_tools()` (catalog) and `@server.call_tool()` (dispatcher)
-   - **Transport**: Supports stdio and SSE transports (set via environment)
+   - **Transport**: Supports stdio (default) and HTTP modes (set via `MCP_TRANSPORT` environment variable)
 
 ### Data Models (`highcommand/models.py`)
 - **Pydantic v2** with `ConfigDict(populate_by_name=True)` for flexible aliasing
-- **Key Models**: `WarInfo`, `PlanetInfo`, `Statistics`, `APIResponse[T]`, `PaginationInfo`
-- **Field Aliasing**: API returns camelCase (`startDate`), models use snake_case with Field aliases
+- **Key Models**: `WarInfo`, `PlanetInfo`, `Statistics`, `CampaignInfo`, `APIResponse[T]`, `PaginationInfo`
+- **Field Aliasing**: API returns camelCase, models use snake_case with Field aliases
 - **Pattern**: All public-facing models inherit from `BaseModel` with explicit Config class
 
 ### External API Integration
-- **Base URL**: `https://api-hellhub-collective.koyeb.app/api`
-- **Rate Limit**: 200 requests/minute (no throttling in code - respect in production)
-- **Authentication**: None required (HellHub API is open)
-- **Response Wrapper**: All endpoints return `{"data": {...}, "error": null, "pagination": {...}}`
-- **6 Endpoints Implemented**: `/war`, `/planets`, `/planets/{id}`, `/statistics`, `/biomes`, `/factions`
+- **Base URL**: Configured via `HIGH_COMMAND_API_BASE_URL` environment variable (default: `http://localhost:5000`)
+- **Rate Limit**: Respect rate limiting in production (check API docs)
+- **Authentication**: None required (High-Command API is open)
+- **Response Format**: All endpoints return structured JSON with data and pagination
+- **7 Endpoints Implemented**: `/api/war/status`, `/api/planets`, `/api/planets/{id}`, `/api/statistics`, `/api/biomes`, `/api/factions`, `/api/campaigns/active`
 
 ## Development Workflows
 
@@ -69,13 +70,22 @@ Must update in sequence to register tools end-to-end:
 
 ### Async Context Manager Pattern (MANDATORY)
 ```python
-# ✅ CORRECT: Always use as context manager
-async with HelldiverAPIClient() as client:
+# ✅ CORRECT: Always use as context manager (creates fresh client per call)
+async with HighCommandAPIClient() as client:
     data = await client.get_war_status()
 
 # ❌ WRONG: Using outside context manager raises RuntimeError
-client = HelldiverAPIClient()
+client = HighCommandAPIClient()
 await client.get_war_status()  # RuntimeError!
+
+# ✅ CORRECT: Tools create fresh client per invocation for concurrency safety
+async def get_war_status_tool(self) -> dict[str, Any]:
+    try:
+        async with HighCommandAPIClient() as client:
+            data = await client.get_war_status()
+            return {"status": "success", "data": data, "error": None}
+    except Exception as e:
+        return {"status": "error", "data": None, "error": str(e)}
 ```
 
 ### Pydantic v2 Model Definition
@@ -103,7 +113,7 @@ logger.info("Fetching data", endpoint="/war", timeout=30.0)  # Structured contex
 ### Error Handling
 - Catch `httpx.HTTPError` for network failures (wrap in try/except)
 - Propagate as `RuntimeError` with context when critical
-- Tools return `{"status": "error", "error": "message"}` - never raise exceptions to MCP
+- Tools return `{"status": "error", "data": None, "error": "message"}` - never raise exceptions to MCP
 
 ## Key Dependencies & Versions
 - `mcp>=0.1.0` - Core MCP protocol
@@ -213,12 +223,12 @@ The repository has a **GitHub Actions workflow** that automatically approves PRs
 
 | File | Purpose | Key Patterns |
 |------|---------|--------------|
-| `highcommand/api_client.py` | HTTP client to HellHub API | Async context manager, httpx.AsyncClient |
-| `highcommand/tools.py` | MCP tool implementations | Wraps API client, `*_tool()` methods |
+| `highcommand/api_client.py` | HTTP client to High-Command API | Async context manager, httpx.AsyncClient |
+| `highcommand/tools.py` | MCP tool implementations | Creates fresh client per call, `*_tool()` methods |
 | `highcommand/server.py` | MCP server registration | Decorators `@server.list_tools()`, `@server.call_tool()` |
 | `highcommand/models.py` | Pydantic data models | `ConfigDict(populate_by_name=True)`, Field aliases |
 | `tests/test_api_client.py` | API client tests | Mock httpx, async tests |
-| `tests/test_server.py` | MCP server tests | Mock HelldiverTools, test tool calling |
+| `tests/test_server.py` | MCP server tests | Mock HighCommandTools, test tool calling |
 | `pyproject.toml` | Project config | Dependencies, tool configs (black, ruff, mypy, pytest) |
 | `Makefile` | Development tasks | 15+ targets, bash-enforced |
 
@@ -259,12 +269,12 @@ make format  # Auto-fix style issues
 ```
 
 ### Add New Tool to MCP
-1. Implement `async def method(self)` in `HelldiverAPIClient`
-2. Implement `async def method_tool(self)` in `HelldiverTools`
+1. Implement `async def method(self)` in `HighCommandAPIClient`
+2. Implement `async def method_tool(self)` in `HighCommandTools`
 3. Add to `server.py` list_tools() return list
 4. Add to `server.py` call_tool() if/elif chain (match on tool name)
 5. Add unit test in `tests/test_server.py`
-6. Run `make test` to verify 12/12 pass
+6. Run `make test` to verify 17/17 pass
 
 ### Check Test Coverage
 ```bash
@@ -273,8 +283,8 @@ pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 
 ## Important Notes
 
-1. **No Authentication**: HellHub API is public - no API keys, tokens, or auth headers
-2. **Rate Limiting**: 200 req/min (respect in production; ignore for now)
+1. **No Authentication**: High-Command API is public - no API keys, tokens, or auth headers
+2. **Rate Limiting**: Respect rate limiting in production (check API docs)
 3. **All Async**: Every I/O operation uses async/await - no sync calls
 4. **Pydantic v2**: Older v1 syntax won't work - use `ConfigDict`, `Field`, not `Config` class
 5. **Package Name**: `highcommand`, NOT `mcp` (avoids shadowing the mcp SDK import)
@@ -292,11 +302,11 @@ pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 
 ## Project Status
 
-✅ **Production Ready** - All 6 API endpoints implemented, 12/12 tests passing, full Docker support, CI/CD workflows active.
+✅ **Production Ready** - All 7 API endpoints implemented, all tests passing, full Docker support, CI/CD workflows active.
 
 ---
 
-**Last Updated**: October 19, 2025  
+**Last Updated**: October 20, 2025  
 **Version**: 1.0.0  
 **Python**: 3.9+ (tested on 3.14.0)  
 **Status**: Production Ready 🟢
