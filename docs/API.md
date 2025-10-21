@@ -10,7 +10,7 @@ This document describes the tools exposed by the High-Command MCP server, which 
 
 **Base URL**: `http://localhost:5000` (configurable via `HIGH_COMMAND_API_BASE_URL`)
 
-**Rate Limit**: Check API documentation
+**Rate Limit**: The High-Command API implements automatic exponential backoff for rate limiting (see [Rate Limiting](#rate-limiting) section)
 
 **Update Frequency**: Real-time
 
@@ -351,6 +351,74 @@ async def main():
 
 asyncio.run(main())
 ```
+
+## Rate Limiting
+
+### Automatic Exponential Backoff
+
+The High-Command API implements **automatic exponential backoff** to handle rate limit responses (HTTP 429).
+
+#### Backoff Strategy
+
+When a request receives a 429 (Too Many Requests) response:
+
+1. **Exponential delays** are applied: `5s → 10s → 20s → 40s → 80s`
+2. **Up to 5 retry attempts** before failing
+3. **Calculation**: Each retry waits `2^attempt * 5` seconds
+
+#### Example Timeline
+
+| Attempt | Status | Action |
+|---------|--------|--------|
+| 1 | Sent | Initial request |
+| 2 | 429 | Wait 5s, retry |
+| 3 | 429 | Wait 10s, retry |
+| 4 | 429 | Wait 20s, retry |
+| 5 | 429 | Wait 40s, retry |
+| 6 | 429 | Wait 80s, then fail |
+
+#### Rate Limiting is Transparent
+
+- **No action required** - All MCP tools automatically handle rate limiting
+- **Graceful degradation** - Returns error after max retries (not an infinite loop)
+- **Logging** - Detailed warnings logged when rate limits are encountered
+
+#### Example: Handling Rate Limits in Your Code
+
+```python
+# Rate limiting is handled automatically by the MCP server
+# Your code doesn't need special handling for 429 errors
+
+from highcommand import HighCommandTools
+
+tools = HighCommandTools()
+
+# This will automatically retry with exponential backoff if rate limited
+response = await tools.get_war_status_tool()
+
+if response["status"] == "error":
+    # If all retries failed, this is where you see the error
+    print(f"API error: {response['error']}")
+else:
+    # Data successfully retrieved (possibly after automatic retries)
+    war_data = response["data"]
+```
+
+#### Best Practices
+
+1. **Respect the API** - Don't make unnecessary requests
+2. **Cache results** - Store data locally when possible
+3. **Handle errors gracefully** - Check response status even though retries are automatic
+4. **Monitor logs** - Watch for repeated 429 errors indicating consistent rate limiting
+
+#### Configuration
+
+The backoff behavior is configured in the upstream High-Command API:
+- Base backoff: 5 seconds
+- Max attempts: 5
+- Max total wait time: ~155 seconds (5+10+20+40+80)
+
+For production deployments, monitor API performance and adjust caching strategies if rate limits become frequent.
 
 ## Resources
 
