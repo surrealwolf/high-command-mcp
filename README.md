@@ -256,7 +256,19 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## API Rate Limiting
 
-The Helldivers 2 API has rate limiting. Be respectful in your requests. The MCP server implements reasonable defaults and handles errors gracefully.
+The High-Command API implements **automatic exponential backoff** for rate limiting:
+
+- ✅ **Automatic retries** - Handles 429 (rate limit) responses transparently
+- ✅ **Exponential backoff** - Delays: 5s → 10s → 20s → 40s → 80s
+- ✅ **Up to 5 attempts** - Fails gracefully after exhausting retries
+- ✅ **Transparent to users** - No special handling needed in your code
+
+**Best practices:**
+1. Cache results locally when possible
+2. Avoid making unnecessary requests
+3. Monitor logs for repeated rate limit warnings
+
+See [docs/API.md#rate-limiting](docs/API.md#rate-limiting) for detailed information.
 
 ## Troubleshooting
 
