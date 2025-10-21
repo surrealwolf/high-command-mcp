@@ -135,7 +135,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [
             TextContent(
                 type="text",
-                text=json.dumps({"status": "error", "error": str(e)}),
+                text=json.dumps({"status": "error", "data": None, "error": str(e)}),
             )
         ]
 

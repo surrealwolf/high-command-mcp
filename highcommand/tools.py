@@ -1,6 +1,6 @@
 """MCP tools for High-Command API."""
 
-from typing import Any
+from typing import Any, Callable
 
 from highcommand.api_client import HighCommandAPIClient
 
@@ -8,18 +8,33 @@ from highcommand.api_client import HighCommandAPIClient
 class HighCommandTools:
     """Tools for interacting with High-Command API."""
 
+    @staticmethod
+    async def _run_tool(func: Callable[..., Any]) -> dict[str, Any]:
+        """Helper to run a tool function with standardized response shape.
+
+        Args:
+            func: Async callable that returns tool data
+
+        Returns:
+            Standardized response with status, data, and error fields
+        """
+        try:
+            data = await func()
+            return {"status": "success", "data": data, "error": None}
+        except Exception as e:
+            return {"status": "error", "data": None, "error": str(e)}
+
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
 
         Returns:
             JSON formatted war status
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_war_status()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_war_status()
+
+        return await self._run_tool(_fetch)
 
     async def get_planets_tool(self) -> dict[str, Any]:
         """Tool to get planet information.
@@ -27,12 +42,11 @@ class HighCommandTools:
         Returns:
             JSON formatted planet data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_planets()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_planets()
+
+        return await self._run_tool(_fetch)
 
     async def get_statistics_tool(self) -> dict[str, Any]:
         """Tool to get global statistics.
@@ -40,12 +54,11 @@ class HighCommandTools:
         Returns:
             JSON formatted statistics data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_statistics()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_statistics()
+
+        return await self._run_tool(_fetch)
 
     async def get_campaign_info_tool(self) -> dict[str, Any]:
         """Tool to get campaign information.
@@ -53,12 +66,11 @@ class HighCommandTools:
         Returns:
             JSON formatted campaign data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_campaign_info()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_campaign_info()
+
+        return await self._run_tool(_fetch)
 
     async def get_planet_status_tool(self, planet_index: int) -> dict[str, Any]:
         """Tool to get status for a specific planet.
@@ -69,12 +81,11 @@ class HighCommandTools:
         Returns:
             JSON formatted planet status data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_planet_status(planet_index)
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_planet_status(planet_index)
+
+        return await self._run_tool(_fetch)
 
     async def get_biomes_tool(self) -> dict[str, Any]:
         """Tool to get biome information.
@@ -82,12 +93,11 @@ class HighCommandTools:
         Returns:
             JSON formatted biome data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_biomes()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_biomes()
+
+        return await self._run_tool(_fetch)
 
     async def get_factions_tool(self) -> dict[str, Any]:
         """Tool to get faction information.
@@ -95,9 +105,8 @@ class HighCommandTools:
         Returns:
             JSON formatted faction data
         """
-        try:
+        async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
-                data = await client.get_factions()
-                return {"status": "success", "data": data, "error": None}
-        except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+                return await client.get_factions()
+
+        return await self._run_tool(_fetch)

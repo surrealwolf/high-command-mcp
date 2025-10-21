@@ -60,6 +60,10 @@ async def test_call_tool_missing_required_parameter():
     assert len(result) == 1
     content = json.loads(result[0].text)
     assert content["status"] == "error"
+    assert "data" in content
+    assert content["data"] is None
+    assert "error" in content
+    assert content["error"] is not None
 
 
 @pytest.mark.asyncio

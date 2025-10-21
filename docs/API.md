@@ -24,10 +24,10 @@ The High-Command API requires no authentication. Simple HTTP requests are used:
 
 ### Environment Variables
 
-**Required**:
-
 **Optional**:
 - `HIGH_COMMAND_API_BASE_URL`: Base URL for High-Command API (default: `http://localhost:5000`)
+- `LOG_LEVEL`: Logging level (default: `INFO`)
+- `MCP_TRANSPORT`: Transport mode - `stdio` or `http` (default: `stdio`)
 - `LOG_LEVEL`: Logging level (default: `INFO`)
 - `MCP_TRANSPORT`: Transport mode - `stdio` or `http` (default: `stdio`)
 
