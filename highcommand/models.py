@@ -24,7 +24,7 @@ class APIResponse(BaseModel, Generic[T]):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    data: Any  # Can be a single object or list
+    data: T  # Can be a single object or list
     error: Optional[str] = None
     pagination: Optional[PaginationInfo] = None
 
@@ -52,8 +52,8 @@ class PlanetInfo(BaseModel):
     name: str
     sector: str
     position: dict[str, float]
-    biome: dict[str, Any] = {}
-    hazards: list[dict[str, Any]] = []
+    biome: dict[str, Any] = Field(default_factory=dict)
+    hazards: list[dict[str, Any]] = Field(default_factory=list)
     status: Optional[dict[str, Any]] = None
 
 
