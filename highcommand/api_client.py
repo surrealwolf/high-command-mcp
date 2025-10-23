@@ -62,9 +62,7 @@ class HighCommandAPIClient:
         if self._client:
             await self._client.aclose()
 
-    async def _handle_response(
-        self, response: httpx.Response, endpoint: str
-    ) -> dict[str, Any]:
+    async def _handle_response(self, response: httpx.Response, endpoint: str) -> dict[str, Any]:
         """Handle API response with proper error categorization.
 
         Args:

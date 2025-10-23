@@ -15,9 +15,7 @@ class HighCommandTools:
     """Tools for interacting with High-Command API."""
 
     @staticmethod
-    async def _run_tool(
-        func: Callable[..., Any], include_metrics: bool = False
-    ) -> dict[str, Any]:
+    async def _run_tool(func: Callable[..., Any], include_metrics: bool = False) -> dict[str, Any]:
         """Helper to run a tool function with standardized response shape.
 
         Args:
@@ -46,7 +44,7 @@ class HighCommandTools:
         except Exception as e:
             elapsed_ms = (time.perf_counter() - start_time) * 1000
             error_type = type(e).__name__
-            error_msg = f"{error_type}: {str(e)}"
+            error_msg = f"{error_type}: {e!s}"
 
             # Log the error with context
             logger.error(
@@ -69,6 +67,7 @@ class HighCommandTools:
         Returns:
             JSON formatted war status
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_war_status()
@@ -81,6 +80,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planets()
@@ -93,6 +93,7 @@ class HighCommandTools:
         Returns:
             JSON formatted statistics data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_statistics()
@@ -105,6 +106,7 @@ class HighCommandTools:
         Returns:
             JSON formatted campaign data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_campaign_info()
@@ -120,6 +122,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet status data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planet_status(planet_index)
@@ -132,6 +135,7 @@ class HighCommandTools:
         Returns:
             JSON formatted biome data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_biomes()
@@ -144,6 +148,7 @@ class HighCommandTools:
         Returns:
             JSON formatted faction data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_factions()
