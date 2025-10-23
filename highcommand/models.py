@@ -24,7 +24,7 @@ class APIResponse(BaseModel, Generic[T]):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    data: T  # Can be a single object or list
+    data: T
     error: Optional[str] = None
     pagination: Optional[PaginationInfo] = None
 

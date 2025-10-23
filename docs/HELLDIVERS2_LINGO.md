@@ -184,7 +184,7 @@ A comprehensive reference of common terminology, slang, and abbreviations used i
 - **Purification** - Their stated ideology
 
 ### Terminids
-- **Bugs** / **Bugs** - Generic insectoid enemies
+- **Bugs** / **Terminids** - Generic insectoid enemies
 - **Hive** - Collective insectoid intelligence
 - **Swarm** - Large group of bugs
 

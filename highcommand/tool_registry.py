@@ -61,7 +61,6 @@ class ToolDefinition:
 
             if param.name in arguments:
                 arg_value = arguments[param.name]
-                # Type validation (basic - can be enhanced)
                 if param.type == "integer":
                     if not isinstance(arg_value, int):
                         raise ValueError(
