@@ -1,20 +1,26 @@
 """MCP tools for High-Command API."""
 
 import inspect
+import time
 from typing import Any, Callable
 
+import structlog
+
 from highcommand.api_client import HighCommandAPIClient
+
+logger = structlog.get_logger(__name__)
 
 
 class HighCommandTools:
     """Tools for interacting with High-Command API."""
 
     @staticmethod
-    async def _run_tool(func: Callable[..., Any]) -> dict[str, Any]:
+    async def _run_tool(func: Callable[..., Any], include_metrics: bool = False) -> dict[str, Any]:
         """Helper to run a tool function with standardized response shape.
 
         Args:
             func: Async callable that returns tool data
+            include_metrics: Whether to include execution metrics in response
 
         Returns:
             Standardized response with status, data, and error fields
@@ -24,11 +30,36 @@ class HighCommandTools:
         """
         if not inspect.iscoroutinefunction(func):
             raise TypeError(f"Expected async function, got {type(func).__name__}")
+
+        start_time = time.perf_counter()
         try:
             data = await func()
-            return {"status": "success", "data": data, "error": None}
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            response = {"status": "success", "data": data, "error": None}
+
+            if include_metrics:
+                response["metrics"] = {"elapsed_ms": elapsed_ms}
+
+            return response
         except Exception as e:
-            return {"status": "error", "data": None, "error": str(e)}
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            error_type = type(e).__name__
+            error_msg = f"{error_type}: {e!s}"
+
+            # Log the error with context
+            logger.error(
+                "Tool execution failed",
+                error_type=error_type,
+                error_msg=str(e),
+                elapsed_ms=elapsed_ms,
+            )
+
+            response = {"status": "error", "data": None, "error": error_msg}
+
+            if include_metrics:
+                response["metrics"] = {"elapsed_ms": elapsed_ms}
+
+            return response
 
     async def get_war_status_tool(self) -> dict[str, Any]:
         """Tool to get current war status.
@@ -36,6 +67,7 @@ class HighCommandTools:
         Returns:
             JSON formatted war status
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_war_status()
@@ -48,6 +80,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planets()
@@ -60,6 +93,7 @@ class HighCommandTools:
         Returns:
             JSON formatted statistics data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_statistics()
@@ -72,6 +106,7 @@ class HighCommandTools:
         Returns:
             JSON formatted campaign data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_campaign_info()
@@ -87,6 +122,7 @@ class HighCommandTools:
         Returns:
             JSON formatted planet status data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_planet_status(planet_index)
@@ -99,6 +135,7 @@ class HighCommandTools:
         Returns:
             JSON formatted biome data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_biomes()
@@ -111,6 +148,7 @@ class HighCommandTools:
         Returns:
             JSON formatted faction data
         """
+
         async def _fetch() -> Any:
             async with HighCommandAPIClient() as client:
                 return await client.get_factions()

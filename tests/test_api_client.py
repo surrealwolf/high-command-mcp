@@ -87,4 +87,3 @@ async def test_get_campaign_info_error(api_client):
         async with api_client:
             with pytest.raises(httpx.HTTPError):
                 await api_client.get_campaign_info()
-
