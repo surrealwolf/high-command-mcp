@@ -92,7 +92,10 @@ async def test_get_campaign_info_error(api_client):
 @pytest.mark.asyncio
 async def test_production_url_validation_https():
     """Test that production environment with HTTPS URL passes validation."""
-    with patch.dict("os.environ", {"ENVIRONMENT": "production", "HIGH_COMMAND_API_BASE_URL": "https://api.example.com"}):
+    with patch.dict(
+        "os.environ",
+        {"ENVIRONMENT": "production", "HIGH_COMMAND_API_BASE_URL": "https://api.example.com"},
+    ):
         # Should not raise
         client = HighCommandAPIClient()
         assert client is not None
@@ -101,7 +104,10 @@ async def test_production_url_validation_https():
 @pytest.mark.asyncio
 async def test_production_url_validation_http_fails():
     """Test that production environment with HTTP URL raises ValueError."""
-    with patch.dict("os.environ", {"ENVIRONMENT": "production", "HIGH_COMMAND_API_BASE_URL": "http://api.example.com"}):
+    with patch.dict(
+        "os.environ",
+        {"ENVIRONMENT": "production", "HIGH_COMMAND_API_BASE_URL": "http://api.example.com"},
+    ):
         with pytest.raises(ValueError, match="Production deployments must use HTTPS"):
             HighCommandAPIClient()
 
@@ -109,7 +115,6 @@ async def test_production_url_validation_http_fails():
 @pytest.mark.asyncio
 async def test_handle_response_success(api_client):
     """Test successful response handling."""
-    import httpx
     from datetime import timedelta
 
     mock_response = MagicMock()
@@ -127,8 +132,9 @@ async def test_handle_response_success(api_client):
 @pytest.mark.asyncio
 async def test_handle_response_rate_limit(api_client):
     """Test handling of 429 rate limit error."""
-    import httpx
     from datetime import timedelta
+
+    import httpx
 
     mock_response = MagicMock()
     mock_response.status_code = 429
@@ -148,8 +154,9 @@ async def test_handle_response_rate_limit(api_client):
 @pytest.mark.asyncio
 async def test_handle_response_server_error(api_client):
     """Test handling of 5xx server errors."""
-    import httpx
     from datetime import timedelta
+
+    import httpx
 
     mock_response = MagicMock()
     mock_response.status_code = 500
@@ -169,8 +176,9 @@ async def test_handle_response_server_error(api_client):
 @pytest.mark.asyncio
 async def test_handle_response_client_error(api_client):
     """Test handling of 4xx client errors."""
-    import httpx
     from datetime import timedelta
+
+    import httpx
 
     mock_response = MagicMock()
     mock_response.status_code = 404
@@ -190,8 +198,9 @@ async def test_handle_response_client_error(api_client):
 @pytest.mark.asyncio
 async def test_handle_response_unknown_error(api_client):
     """Test handling of unknown HTTP errors (not 4xx or 5xx)."""
-    import httpx
     from datetime import timedelta
+
+    import httpx
 
     mock_response = MagicMock()
     mock_response.status_code = 303  # 3xx status code
@@ -222,6 +231,7 @@ async def test_get_planets(api_client):
         mock_http_response.status_code = 200
         mock_http_response.raise_for_status = MagicMock()
         from datetime import timedelta
+
         mock_http_response.elapsed = timedelta(seconds=0.1)
         mock_client.get.return_value = mock_http_response
 
@@ -245,6 +255,7 @@ async def test_get_statistics(api_client):
         mock_http_response.status_code = 200
         mock_http_response.raise_for_status = MagicMock()
         from datetime import timedelta
+
         mock_http_response.elapsed = timedelta(seconds=0.1)
         mock_client.get.return_value = mock_http_response
 
@@ -268,6 +279,7 @@ async def test_get_planet_status(api_client):
         mock_http_response.status_code = 200
         mock_http_response.raise_for_status = MagicMock()
         from datetime import timedelta
+
         mock_http_response.elapsed = timedelta(seconds=0.1)
         mock_client.get.return_value = mock_http_response
 
@@ -291,6 +303,7 @@ async def test_get_biomes(api_client):
         mock_http_response.status_code = 200
         mock_http_response.raise_for_status = MagicMock()
         from datetime import timedelta
+
         mock_http_response.elapsed = timedelta(seconds=0.1)
         mock_client.get.return_value = mock_http_response
 
@@ -314,6 +327,7 @@ async def test_get_factions(api_client):
         mock_http_response.status_code = 200
         mock_http_response.raise_for_status = MagicMock()
         from datetime import timedelta
+
         mock_http_response.elapsed = timedelta(seconds=0.1)
         mock_client.get.return_value = mock_http_response
 
