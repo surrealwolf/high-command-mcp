@@ -49,7 +49,7 @@ pip install -r requirements-http.txt
 pip install -r requirements-kubernetes.txt
 ```
 
-**See [docs/REQUIREMENTS.md](REQUIREMENTS.md) for all installation options.**
+**See [REQUIREMENTS.md](REQUIREMENTS.md) for all installation options.**
 
 ### Option 2: Docker
 
