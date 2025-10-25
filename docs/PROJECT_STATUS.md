@@ -10,10 +10,11 @@ All available HellHub Collective API endpoints are now accessible through the MC
 
 ## Quick Stats
 
-- ✅ **12/12 Tests Passing** (100% pass rate)
-- ✅ **6/6 API Endpoints** Working
+- ✅ **30/30 Tests Passing** (100% pass rate)
+- ✅ **7/7 API Endpoints** Working
 - ✅ **7 MCP Tools** Registered
 - ✅ **Live Data** Confirmed
+- ✅ **64% Code Coverage**
 - ✅ **0 Critical Issues**
 
 ---
@@ -51,22 +52,19 @@ high-command/
 │   ├── server.py            # MCP Server
 │   ├── api_client.py        # API Client
 │   ├── models.py            # Pydantic Models
-│   └── tools.py             # Tool Implementations
+│   ├── tools.py             # Tool Implementations
+│   └── tool_registry.py     # Tool Registry
 ├── tests/                   # Unit Tests
 │   ├── test_api_client.py
 │   ├── test_models.py
 │   ├── test_server.py
-│   ├── demo_all_endpoints.py
-│   └── demo_new_endpoints.py
+│   └── test_tool_registry.py
 ├── docs/                    # Documentation
 │   ├── API.md
 │   ├── SETUP.md
-│   ├── CONTRIBUTING.md
-│   ├── ENDPOINT_EXPANSION.md
-│   ├── PROJECT_SUMMARY.md
-│   ├── PROJECT_STATUS.md
 │   ├── GETTING_STARTED.md
-│   └── ITERATION_SUMMARY.md
+│   ├── TROUBLESHOOTING.md
+│   └── ...
 ├── .github/
 │   ├── copilot-instructions.md  # Development guide
 │   └── workflows/
@@ -146,5 +144,5 @@ make check                   # Run linters and tests
 ---
 
 **Version**: 1.0.0  
-**Python**: 3.13.7  
+**Python**: 3.9+ (tested on 3.12.3)  
 **Status**: Production Ready 🟢

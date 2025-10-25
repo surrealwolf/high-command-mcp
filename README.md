@@ -256,19 +256,23 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## API Rate Limiting
 
-The High-Command API implements **automatic exponential backoff** for rate limiting:
+The High-Command MCP client **detects** rate limit responses but does **not implement automatic retry logic**:
 
-- ✅ **Automatic retries** - Handles 429 (rate limit) responses transparently
-- ✅ **Exponential backoff** - Delays: 5s → 10s → 20s → 40s → 80s
-- ✅ **Up to 5 attempts** - Fails gracefully after exhausting retries
-- ✅ **Transparent to users** - No special handling needed in your code
+- ✅ **Detects 429 errors** - Logs rate limit warnings when API returns "Too Many Requests"
+- ✅ **Transparent error handling** - Propagates rate limit errors to calling application
+- ⚠️ **No automatic retries** - Applications must implement their own exponential backoff strategy
+- ✅ **Example implementations** - See [docs/API.md#rate-limiting](docs/API.md#rate-limiting) for backoff patterns
 
-**Best practices:**
-1. Cache results locally when possible
-2. Avoid making unnecessary requests
-3. Monitor logs for repeated rate limit warnings
+**Best practices for production:**
+1. Implement exponential backoff in your application layer (example in API docs)
+2. Cache results locally when possible to minimize API calls
+3. Avoid making unnecessary or repeated requests
+4. Monitor logs for repeated rate limit warnings (`logger.warning("Rate limit exceeded")`)
+5. Consider request batching and throttling at the application level
 
-See [docs/API.md#rate-limiting](docs/API.md#rate-limiting) for detailed information.
+**Why no automatic retries?** The MCP client follows a transparent error model, giving applications full control over retry logic and timeout behavior rather than hiding delays behind automatic retries.
+
+See [docs/API.md#rate-limiting](docs/API.md#rate-limiting) for detailed information and code examples.
 
 ## Troubleshooting
 

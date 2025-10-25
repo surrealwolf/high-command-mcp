@@ -171,14 +171,15 @@ high-command/
 
 ## Next Steps
 
-- Read [README.md](README.md) for project overview
-- Check [docs/API.md](docs/API.md) for API documentation
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-- Review [.copilot-instructions.md](.copilot-instructions.md) for development notes
+- Read [README.md](../README.md) for project overview
+- Check [docs/API.md](API.md) for API documentation
+- See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
+- Review [.github/copilot-instructions.md](../.github/copilot-instructions.md) for development patterns
 
 ## Getting Help
 
-- Check [README.md](README.md) for common questions
+- Check [README.md](../README.md) for common questions
+- Review [docs/TROUBLESHOOTING.md](TROUBLESHOOTING.md) for troubleshooting
 - Review GitHub Issues
 - Start a GitHub Discussion
 - Contact: lee@fullmetal.dev
@@ -194,4 +195,4 @@ high-command/
 
 ---
 
-**Last Updated**: October 18, 2025
+**Last Updated**: October 25, 2025

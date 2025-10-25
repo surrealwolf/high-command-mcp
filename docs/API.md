@@ -10,7 +10,7 @@ This document describes the tools exposed by the High-Command MCP server, which 
 
 **Base URL**: `http://localhost:5000` (configurable via `HIGH_COMMAND_API_BASE_URL`)
 
-**Rate Limit**: The High-Command API implements automatic exponential backoff for rate limiting (see [Rate Limiting](#rate-limiting) section)
+**Rate Limit**: The MCP client detects and logs 429 (rate limit) responses but does not implement automatic retry logic. See [Rate Limiting](#rate-limiting) section for details and implementation patterns.
 
 **Update Frequency**: Real-time
 
@@ -354,71 +354,112 @@ asyncio.run(main())
 
 ## Rate Limiting
 
-### Automatic Exponential Backoff
+### Client-Side Rate Limit Detection
 
-The High-Command API implements **automatic exponential backoff** to handle rate limit responses (HTTP 429).
+The High-Command MCP client **detects** but does **not automatically retry** rate-limited requests (HTTP 429).
 
-#### Backoff Strategy
+#### How It Works
 
-When a request receives a 429 (Too Many Requests) response:
+1. **Detection**: When the API returns HTTP 429, the client logs a warning:
+   ```
+   WARNING: Rate limit exceeded endpoint=/api/war/status status=429
+   ```
 
-1. **Exponential delays** are applied: `5s → 10s → 20s → 40s → 80s`
-2. **Up to 5 retry attempts** before failing
-3. **Calculation**: Each retry waits `2^attempt * 5` seconds
+2. **Error Propagation**: The 429 error is raised as `RuntimeError: Rate limit exceeded`
 
-#### Example Timeline
+3. **No Automatic Retries**: The MCP client does NOT implement exponential backoff or automatic retries
 
-| Attempt | Status | Action |
-|---------|--------|--------|
-| 1 | Sent | Initial request |
-| 2 | 429 | Wait 5s, retry |
-| 3 | 429 | Wait 10s, retry |
-| 4 | 429 | Wait 20s, retry |
-| 5 | 429 | Wait 40s, retry |
-| 6 | 429 | Wait 80s, then fail |
+#### Why No Automatic Retries?
 
-#### Rate Limiting is Transparent
+The MCP client follows a **transparent error model** where:
+- Applications have full control over retry logic
+- Rate limit handling can be customized per use case
+- Avoids hiding errors from the calling application
+- Prevents unexpected delays in synchronous-feeling APIs
 
-- **No action required** - All MCP tools automatically handle rate limiting
-- **Graceful degradation** - Returns error after max retries (not an infinite loop)
-- **Logging** - Detailed warnings logged when rate limits are encountered
+#### Implementing Exponential Backoff
 
-#### Example: Handling Rate Limits in Your Code
+If you need automatic retry with exponential backoff, implement it at the application level:
 
 ```python
-# Rate limiting is handled automatically by the MCP server
-# Your code doesn't need special handling for 429 errors
-
+import asyncio
 from highcommand import HighCommandTools
 
-tools = HighCommandTools()
+async def get_with_exponential_backoff(tool_func, max_retries=5):
+    """
+    Call a tool with exponential backoff on rate limit errors.
+    
+    Implements: 5s → 10s → 20s → 40s → 80s delays
+    """
+    for attempt in range(max_retries):
+        try:
+            result = await tool_func()
+            
+            # Check if the tool returned an error
+            if result["status"] == "error" and "Rate limit" in result.get("error", ""):
+                if attempt < max_retries - 1:
+                    wait_time = (2 ** attempt) * 5  # Exponential: 5, 10, 20, 40, 80
+                    print(f"Rate limited, waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                    await asyncio.sleep(wait_time)
+                    continue
+            
+            return result
+            
+        except Exception as e:
+            if attempt < max_retries - 1:
+                wait_time = (2 ** attempt) * 5
+                print(f"Error: {e}, waiting {wait_time}s before retry {attempt + 2}/{max_retries}")
+                await asyncio.sleep(wait_time)
+                continue
+            raise
+    
+    return {"status": "error", "data": None, "error": "Max retries exceeded"}
 
-# This will automatically retry with exponential backoff if rate limited
-response = await tools.get_war_status_tool()
 
-if response["status"] == "error":
-    # If all retries failed, this is where you see the error
-    print(f"API error: {response['error']}")
-else:
-    # Data successfully retrieved (possibly after automatic retries)
-    war_data = response["data"]
+# Usage example
+async def main():
+    tools = HighCommandTools()
+    
+    # Wrap tool call with backoff
+    result = await get_with_exponential_backoff(tools.get_war_status_tool)
+    
+    if result["status"] == "success":
+        print(f"War data: {result['data']}")
+    else:
+        print(f"Failed after retries: {result['error']}")
 ```
+
+#### Retry Timeline Example
+
+| Attempt | Action | Wait Time |
+|---------|--------|-----------|
+| 1 | Send request | - |
+| 2 | 429 response → Wait 5s | 5s |
+| 3 | 429 response → Wait 10s | 10s |
+| 4 | 429 response → Wait 20s | 20s |
+| 5 | 429 response → Wait 40s | 40s |
+| 6 | 429 response → Fail | - |
+
+Total max wait time: ~115 seconds across 5 retries
 
 #### Best Practices
 
 1. **Respect the API** - Don't make unnecessary requests
-2. **Cache results** - Store data locally when possible
-3. **Handle errors gracefully** - Check response status even though retries are automatic
-4. **Monitor logs** - Watch for repeated 429 errors indicating consistent rate limiting
+2. **Cache results** - Store data locally when possible to reduce API calls
+3. **Implement retry logic** - Use exponential backoff pattern shown above for production use
+4. **Handle errors gracefully** - Always check response status in your application
+5. **Monitor logs** - Watch for repeated 429 errors indicating consistent rate limiting
+6. **Batch operations** - Group related requests when possible to reduce total API calls
 
-#### Configuration
+#### Rate Limit Headers
 
-The backoff behavior is configured in the upstream High-Command API:
-- Base backoff: 5 seconds
-- Max attempts: 5
-- Max total wait time: ~155 seconds (5+10+20+40+80)
+Monitor these headers in API responses (if provided by upstream API):
+- `X-Rate-Remaining`: Requests remaining in current window
+- `X-Rate-Limit`: Maximum requests per time window
+- `X-Rate-Reset`: Unix timestamp when limit resets
+- `X-Rate-Count`: Requests made in current window
 
-For production deployments, monitor API performance and adjust caching strategies if rate limits become frequent.
+**Note**: Header availability depends on the upstream High-Command API implementation.
 
 ## Resources
 

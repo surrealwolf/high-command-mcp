@@ -38,11 +38,22 @@ Be respectful and professional in all interactions.
 ### Code Style
 
 - Follow PEP 8
-- Use type hints
+- Use type hints for all functions and methods
 - Maximum line length: 100 characters
 - Docstrings for all public functions/classes
 - Use Pydantic v2 for data validation
 - Use async/await for all I/O operations
+
+### Rate Limiting Best Practices
+
+When working with the API client:
+
+1. **The MCP client does NOT implement automatic retries** - Design your features accordingly
+2. **Implement exponential backoff** at the application level when needed (see `docs/API.md#rate-limiting`)
+3. **Cache responses** when appropriate to minimize API calls
+4. **Add tests** for rate limit handling in your features
+5. **Log rate limit events** using structured logging: `logger.warning("Rate limit exceeded", endpoint=...)`
+6. **Document retry behavior** if your feature implements custom retry logic
 
 ### Project Structure
 

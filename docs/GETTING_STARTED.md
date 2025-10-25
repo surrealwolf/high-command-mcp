@@ -82,14 +82,14 @@ make run
 
 ## 📚 Documentation
 
-| File | Purpose |
-|------|---------|
+| Resource | Purpose |
+|----------|---------|
 | `README.md` | Project overview |
 | `docs/SETUP.md` | Installation guide |
-| `docs/API.md` | API documentation |
-| `docs/CONTRIBUTING.md` | Contribution guidelines |
-| `.github/copilot-instructions.md` | Development patterns |
-| `docs/PROJECT_SUMMARY.md` | Project statistics |
+| `docs/API.md` | Tool specifications and rate limiting guide |
+| `CONTRIBUTING.md` | Contributing guidelines |
+| `.github/copilot-instructions.md` | Code patterns and best practices |
+| `docs/TROUBLESHOOTING.md` | Troubleshooting common issues |
 
 ## 🎯 Development Workflow
 
@@ -206,12 +206,13 @@ docker images | grep high-command
 Your MCP Server is ready for development. Start by:
 
 1. Reading the documentation
-2. Running the tests
-3. Exploring the code
-4. Making your first contribution
+2. Running the tests (`make test`)
+3. Exploring the code and architecture
+4. Check out [docs/API.md](API.md) for rate limiting patterns
+5. Making your first contribution
 
 ---
 
-**Version**: 1.0.0
-**Python**: 3.13.7
+**Version**: 1.0.0  
+**Python**: 3.9+ (tested on 3.12.3)  
 **Status**: ✅ Production Ready
