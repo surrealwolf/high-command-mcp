@@ -188,6 +188,27 @@ async def test_handle_response_client_error(api_client):
 
 
 @pytest.mark.asyncio
+async def test_handle_response_unknown_error(api_client):
+    """Test handling of unknown HTTP errors (not 4xx or 5xx)."""
+    import httpx
+    from datetime import timedelta
+
+    mock_response = MagicMock()
+    mock_response.status_code = 303  # 3xx status code
+    mock_response.reason_phrase = "See Other"
+    mock_response.elapsed = timedelta(seconds=0.1)
+
+    def raise_http_error():
+        raise httpx.HTTPStatusError("Redirect", request=MagicMock(), response=mock_response)
+
+    mock_response.raise_for_status = raise_http_error
+
+    async with api_client:
+        with pytest.raises(RuntimeError, match="HTTP error"):
+            await api_client._handle_response(mock_response, "/api/test")
+
+
+@pytest.mark.asyncio
 async def test_get_planets(api_client):
     """Test getting planets information."""
     mock_response = {"status": "success", "data": []}
@@ -300,3 +321,45 @@ async def test_get_factions(api_client):
             result = await api_client.get_factions()
             assert result == mock_response
             mock_client.get.assert_called_once_with("/api/factions")
+
+
+@pytest.mark.asyncio
+async def test_get_war_status_without_context_manager(api_client):
+    """Test that calling get_war_status without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_war_status()
+
+
+@pytest.mark.asyncio
+async def test_get_planets_without_context_manager(api_client):
+    """Test that calling get_planets without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_planets()
+
+
+@pytest.mark.asyncio
+async def test_get_statistics_without_context_manager(api_client):
+    """Test that calling get_statistics without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_statistics()
+
+
+@pytest.mark.asyncio
+async def test_get_planet_status_without_context_manager(api_client):
+    """Test that calling get_planet_status without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_planet_status(1)
+
+
+@pytest.mark.asyncio
+async def test_get_biomes_without_context_manager(api_client):
+    """Test that calling get_biomes without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_biomes()
+
+
+@pytest.mark.asyncio
+async def test_get_factions_without_context_manager(api_client):
+    """Test that calling get_factions without context manager raises RuntimeError."""
+    with pytest.raises(RuntimeError, match="Client not initialized"):
+        await api_client.get_factions()
