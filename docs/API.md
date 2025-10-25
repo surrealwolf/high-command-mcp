@@ -58,7 +58,7 @@ None
 
 **Example**:
 ```python
-async with HelldiverAPIClient() as client:
+async with HighCommandAPIClient() as client:
     war_status = await client.get_war_status()
     war_data = war_status['data']
     print(f"War ID: {war_data['id']}")
@@ -106,7 +106,7 @@ None
 
 **Example**:
 ```python
-async with HelldiverAPIClient() as client:
+async with HighCommandAPIClient() as client:
     planets_response = await client.get_planets()
     planets = planets_response['data']
     for planet in planets:
@@ -155,7 +155,7 @@ None
 
 **Example**:
 ```python
-async with HelldiverAPIClient() as client:
+async with HighCommandAPIClient() as client:
     stats_response = await client.get_statistics()
     stats = stats_response['data']
     print(f"Missions Won: {stats[0]['missionsWon']}")
@@ -192,7 +192,7 @@ None
 
 **Example**:
 ```python
-async with HelldiverAPIClient() as client:
+async with HighCommandAPIClient() as client:
     campaigns = await client.get_campaign_info()
     for campaign in campaigns['data']:
         print(f"Campaign on planet {campaign['planet']}")
@@ -231,7 +231,7 @@ Get detailed status for a specific planet.
 
 **Example**:
 ```python
-async with HelldiverAPIClient() as client:
+async with HighCommandAPIClient() as client:
     planet_status = await client.get_planet_status(planet_index=0)
     status = planet_status['data']
     print(f"Planet: {status['name']} - Status: {status['status']['owner']}")
@@ -271,7 +271,7 @@ Raised as `httpx.HTTPError`:
 
 ```python
 try:
-    async with HelldiverAPIClient() as client:
+    async with HighCommandAPIClient() as client:
         status = await client.get_war_status()
 except httpx.HTTPError as e:
     print(f"API Error: {e}")
@@ -282,7 +282,7 @@ except httpx.HTTPError as e:
 Raised when client is used outside async context:
 
 ```python
-client = HelldiverAPIClient()
+client = HighCommandAPIClient()
 # This will raise RuntimeError
 await client.get_war_status()
 ```
@@ -312,10 +312,10 @@ Monitor rate limit headers in responses:
 
 ```python
 import asyncio
-from mcp.api_client import HelldiverAPIClient
+from highcommand.api_client import HighCommandAPIClient
 
 async def main():
-    async with HelldiverAPIClient() as client:
+    async with HighCommandAPIClient() as client:
         war_status = await client.get_war_status()
         print(war_status['data'])
 
@@ -327,7 +327,7 @@ asyncio.run(main())
 ```python
 import asyncio
 import httpx
-from mcp.api_client import HelldiverAPIClient
+from highcommand.api_client import HighCommandAPIClient
 import time
 
 async def get_with_retry(func, max_retries=3):
@@ -342,7 +342,7 @@ async def get_with_retry(func, max_retries=3):
             await asyncio.sleep(wait_time)
 
 async def main():
-    async with HelldiverAPIClient() as client:
+    async with HighCommandAPIClient() as client:
         try:
             planets = await get_with_retry(client.get_planets)
             print(f"Found {len(planets['data'])} planets")

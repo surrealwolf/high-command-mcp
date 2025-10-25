@@ -109,7 +109,7 @@ kubectl get pods -l app=high-command
 kubectl port-forward svc/high-command 8000:80
 ```
 
-See [KUBERNETES_DEPLOYMENT.md](docs/KUBERNETES_DEPLOYMENT.md) for complete guide.
+**Note**: Kubernetes deployment manifests are available in the `k8s/` directory. Configure them according to your cluster setup.
 
 ## �💻 VS Code Integration
 
@@ -146,14 +146,14 @@ The High-Command MCP server integrates seamlessly with VS Code and GitHub Copilo
 /ask Show me the game statistics
 ```
 
-**Full Guide**: See [docs/VSCODE_SETUP.md](docs/VSCODE_SETUP.md)
+**Configuration**: The above setup enables the MCP server to work with VS Code's Copilot integration. Adjust paths as needed for your environment.
 
 ## API Tools
 
 The MCP server exposes the following tools:
 
 ### `get_war_status`
-Get current war status from HellHub Collective API.
+Get current war status from the High-Command API.
 
 **Parameters**: None
 
@@ -284,10 +284,10 @@ The Helldivers 2 API has Cloudflare bot protection. Make sure you're including t
 
 ### Connection Timeouts
 
-Increase the timeout value in `HelldiverAPIClient`:
+Increase the timeout value in `HighCommandAPIClient`:
 
 ```python
-client = HelldiverAPIClient(timeout=60.0)  # 60 seconds
+client = HighCommandAPIClient(timeout=60.0)  # 60 seconds
 ```
 
 ## License

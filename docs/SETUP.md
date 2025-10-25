@@ -49,7 +49,7 @@ pip install -r requirements-http.txt
 pip install -r requirements-kubernetes.txt
 ```
 
-**See [REQUIREMENTS.md](../REQUIREMENTS.md) for all installation options.**
+**See [docs/REQUIREMENTS.md](REQUIREMENTS.md) for all installation options.**
 
 ### Option 2: Docker
 
@@ -118,7 +118,7 @@ export X_SUPER_CONTACT=lee@fullmetal.dev
 **Solution**: The API might be temporarily unavailable or you might have a network issue. Try:
 1. Check your internet connection
 2. Verify the API endpoint is accessible: `curl https://api.helldivers2.io/api/v1/war/status`
-3. Increase the timeout in code: `HelldiverAPIClient(timeout=60.0)`
+3. Increase the timeout in code: `HighCommandAPIClient(timeout=60.0)`
 
 ### Issue: "pytest: command not found"
 

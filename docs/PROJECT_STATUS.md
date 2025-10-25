@@ -4,7 +4,7 @@
 
 **Documentation moved to `docs/` folder and development instructions moved to `.github/copilot-instructions.md`**
 
-All available HellHub Collective API endpoints are now accessible through the MCP protocol, properly tested, and integrated with comprehensive logging and error handling.
+All available High-Command API endpoints are now accessible through the MCP protocol, properly tested, and integrated with comprehensive logging and error handling.
 
 ---
 
