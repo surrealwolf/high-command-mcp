@@ -261,3 +261,56 @@ def test_tool_registry_clear():
 
     registry.clear()
     assert len(registry.list_all()) == 0
+
+
+def test_tool_definition_validate_string_type():
+    """Test validating string type parameter."""
+    params = [
+        ToolParameter(
+            name="filter",
+            type="string",
+            description="Filter results",
+            required=True,
+        )
+    ]
+
+    tool = ToolDefinition(
+        name="test_tool",
+        description="Test tool",
+        handler=lambda: None,
+        parameters=params,
+    )
+
+    # Should not raise for valid string
+    tool.validate_arguments({"filter": "test"})
+
+    # Should raise for non-string
+    with pytest.raises(ValueError, match="must be string"):
+        tool.validate_arguments({"filter": 123})
+
+
+def test_tool_definition_validate_boolean_type():
+    """Test validating boolean type parameter."""
+    params = [
+        ToolParameter(
+            name="enabled",
+            type="boolean",
+            description="Enable feature",
+            required=True,
+        )
+    ]
+
+    tool = ToolDefinition(
+        name="test_tool",
+        description="Test tool",
+        handler=lambda: None,
+        parameters=params,
+    )
+
+    # Should not raise for valid boolean
+    tool.validate_arguments({"enabled": True})
+    tool.validate_arguments({"enabled": False})
+
+    # Should raise for non-boolean
+    with pytest.raises(ValueError, match="must be boolean"):
+        tool.validate_arguments({"enabled": "true"})

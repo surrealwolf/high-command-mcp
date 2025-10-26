@@ -131,3 +131,103 @@ async def test_call_tool_response_shape():
         assert "data" in content
         assert "error" in content
         assert content["status"] in ["success", "error"]
+
+
+@pytest.mark.asyncio
+async def test_call_tool_get_planets():
+    """Test calling get_planets tool."""
+    mock_data = {"data": []}
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_planets.return_value = mock_data
+
+        result = await call_tool("get_planets", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_data
+
+
+@pytest.mark.asyncio
+async def test_call_tool_get_statistics():
+    """Test calling get_statistics tool."""
+    mock_data = {"stats": "data"}
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_statistics.return_value = mock_data
+
+        result = await call_tool("get_statistics", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_data
+
+
+@pytest.mark.asyncio
+async def test_call_tool_get_planet_status_success():
+    """Test calling get_planet_status tool with valid planet_index."""
+    mock_data = {"planet": "info"}
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_planet_status.return_value = mock_data
+
+        result = await call_tool("get_planet_status", {"planet_index": 123})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_data
+
+
+@pytest.mark.asyncio
+async def test_call_tool_get_biomes():
+    """Test calling get_biomes tool."""
+    mock_data = {"biomes": []}
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_biomes.return_value = mock_data
+
+        result = await call_tool("get_biomes", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_data
+
+
+@pytest.mark.asyncio
+async def test_call_tool_get_factions():
+    """Test calling get_factions tool."""
+    mock_data = {"factions": []}
+
+    with patch("highcommand.tools.HighCommandAPIClient") as mock_client_class:
+        mock_client = AsyncMock()
+        mock_client_class.return_value = mock_client
+        mock_client.__aenter__.return_value = mock_client
+        mock_client.__aexit__.return_value = None
+        mock_client.get_factions.return_value = mock_data
+
+        result = await call_tool("get_factions", {})
+
+        assert len(result) == 1
+        content = json.loads(result[0].text)
+        assert content["status"] == "success"
+        assert content["data"] == mock_data
