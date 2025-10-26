@@ -1,6 +1,6 @@
 # High-Command MCP - Quick Reference Card
 
-**Version**: 1.0.0 | **Status**: Production Ready | **Last Updated**: October 21, 2025
+**Version**: 1.0.0 | **Status**: Production Ready | **Last Updated**: October 25, 2025
 
 ---
 
@@ -295,7 +295,7 @@ Use keyword args: `logger.info("message", key=value)` not `%` formatting
 
 ## Version Info
 
-- **Python**: 3.9+ (tested on 3.13.7)
+- **Python**: 3.9+ (tested on 3.12.3)
 - **MCP SDK**: 0.1.0+
 - **httpx**: 0.24.0+
 - **Pydantic**: 2.0.0+

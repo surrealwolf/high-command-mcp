@@ -34,7 +34,7 @@ The codebase follows a clean separation of concerns across three critical layers
 
 ### External API Integration
 - **Base URL**: Configured via `HIGH_COMMAND_API_BASE_URL` environment variable (default: `http://localhost:5000`)
-- **Rate Limit**: Respect rate limiting in production (check API docs)
+- **Rate Limiting**: The MCP client detects and logs 429 (rate limit) responses but does NOT implement automatic retry logic. Applications should implement their own exponential backoff strategy when handling rate limits.
 - **Authentication**: None required (High-Command API is open)
 - **Response Format**: All endpoints return structured JSON with data and pagination
 - **7 Endpoints Implemented**: `/api/war/status`, `/api/planets`, `/api/planets/{id}`, `/api/statistics`, `/api/biomes`, `/api/factions`, `/api/campaigns/active`
@@ -284,11 +284,15 @@ pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 ## Important Notes
 
 1. **No Authentication**: High-Command API is public - no API keys, tokens, or auth headers
-2. **Rate Limiting**: Respect rate limiting in production (check API docs)
+2. **Rate Limiting Strategy**: 
+   - The MCP client detects 429 (rate limit) errors and logs them with `logger.warning()`
+   - **No automatic retry** - Applications using this MCP client should implement their own exponential backoff
+   - When building integrations, cache responses and avoid unnecessary repeated requests
+   - See `docs/API.md` for example backoff implementation patterns
 3. **All Async**: Every I/O operation uses async/await - no sync calls
 4. **Pydantic v2**: Older v1 syntax won't work - use `ConfigDict`, `Field`, not `Config` class
 5. **Package Name**: `highcommand`, NOT `mcp` (avoids shadowing the mcp SDK import)
-6. **Test Coverage**: Currently 100% on implemented code - maintain for new features
+6. **Test Coverage**: Currently 64% on implemented code - maintain for new features
 7. **Type Checking**: `mypy` configured in pyproject.toml - all functions need type hints
 8. **Format on Save**: Black line-length is 100 chars - configure your editor
 
@@ -306,7 +310,7 @@ pytest --cov=highcommand --cov-report=html  # Opens htmlcov/index.html
 
 ---
 
-**Last Updated**: October 20, 2025  
+**Last Updated**: October 25, 2025  
 **Version**: 1.0.0  
 **Python**: 3.9+ (tested on 3.14.0)  
 **Status**: Production Ready 🟢
