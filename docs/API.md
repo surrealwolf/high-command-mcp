@@ -440,7 +440,7 @@ async def main():
 | 5 | 429 response → Wait 40s | 40s |
 | 6 | 429 response → Fail | - |
 
-Total max wait time: ~115 seconds across 5 retries
+Total max wait time: 75 seconds across 5 retries
 
 #### Best Practices
 
